@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><!-- thymeleaf 사용 선언 -->
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Insert title here</title>
+		<script type="text/javascript" src="/mini/webjars/jquery/3.3.1/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="/mini/webjars/jqgrid/4.7.0/js/i18n/grid.locale-kr.js"></script>	
+		<script type="text/javascript" src="/mini/webjars/jqgrid/4.7.0/js/jquery.jqGrid.js"></script>	
+		<link rel="stylesheet" href="/mini/webjars/jquery-ui/1.12.1/jquery-ui.css"/>		
+		<link rel="stylesheet" href="/mini/webjars/jqgrid/4.7.0/css/ui.jqgrid.css"/>
+		<link rel="stylesheet" th:href="${#httpServletRequest.getContextPath()} + ${rUrl.getForLookupPath('/css/common.css')}"/>
+		<script type="text/javascript" th:src="${#httpServletRequest.getContextPath()} + ${rUrl.getForLookupPath('/js/common/jein_common.js')}"></script>
+		<script type="text/javascript" th:src="${#httpServletRequest.getContextPath()} + ${rUrl.getForLookupPath('/js/common/jein_util.js')}"></script>
+		<script type="text/javascript">
+		jcm.doAjax(true, "/mini/sample/data/sampleData01", {'TEST':'TEST'}, null, {'reqMethod' : 'POST'});
+		</script>
+	</head>
+	<body>
+		<p th:text="${test}"></p>
+		<table id="jqGrid"></table>
+   		<div id="jqGridPager"></div>
+   		
+   		<script type="text/javascript"> 
+        $(document).ready(function () {
+            $("#jqGrid").jqGrid({
+                url: 'http://trirand.com/blog/phpjqgrid/examples/jsonp/getjsonp.php?qwery=longorders',
+                mtype: "GET",
+                datatype: "jsonp",
+                colModel: [
+                    { label: 'OrderID', name: 'OrderID', key: true, width: 75 },
+                    { label: 'Customer ID', name: 'CustomerID', width: 150 },
+                    { label: 'Order Date', name: 'OrderDate', width: 150, formatter : 'date', formatoptions: { srcformat : 'Y-m-d H:i:s', newformat :'ShortDate'}},
+                    { label: 'Freight', name: 'Freight', width: 150 },
+                    { label:'Ship Name', name: 'ShipName', width: 150 }
+                ],
+				viewrecords: true,
+                width: 780,
+                height: 250,
+                rowNum: 20,
+                pager: "#jqGridPager"
+            });
+        });
+ 
+   </script>
+   		
+	</body>
+</html>
