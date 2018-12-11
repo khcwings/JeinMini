@@ -6,6 +6,14 @@
 	</head>
 	<body>
 		<h1 th:text="${sampleTitle}">Thymeleaf Test Page</h1>
-		<div th:utext="${sampleUText}"></div>
+		<div>
+			<p>Html-text : </p><p th:text="${sampleUText}"></p>
+			<br/>
+			<p>Html-utext : </p><p th:utext="${sampleUText}"></p>
+		</div>
+		<div th:insert="~{sample/header::header}"></div>  
+		<div th:insert="~{header::header}"></div>  		
+		<div th:insert="{header::header}"></div>  	
+		<div th:insert="header::header"></div>  
 	</body>
 </html>
