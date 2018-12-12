@@ -26,6 +26,7 @@ public class JeinMiniApplicationTests {
 
 		menu.setMenuId("SAMPLE0" + i);
 		menu.setMenuUrl("/sample/view/sample0" + i);
+		menu.setMenuName("샘플 0" + i);
 		menu.setMenuPath("/sample/sample0" + i);
 		menuRepo.save(menu);
 		}

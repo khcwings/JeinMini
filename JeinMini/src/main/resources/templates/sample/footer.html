@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<footer th:fragment="footerFragment"> Footer�����Դϴ�. </footer>
-
+<head>
+	<meta charset="UTF-8"/><!-- 미설정인 경우 한글 깨짐 발생할 수 있음-->
+</head>
+<body>
+	<footer th:fragment="footerFragment"> 
+		<h1 th:text="${footerInfo}">[샘플]Html Footer Page</h1>
+	</footer>
+</body>
 </html>

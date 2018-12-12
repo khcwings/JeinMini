@@ -1,7 +1,6 @@
-package com.jein.mini.web.interceptor;
+package com.jein.mini.web.config;
 
 import java.util.List;
-
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,121 +22,127 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.jein.mini.web.interceptor.DataCheckInterceptor;
+import com.jein.mini.web.interceptor.FileCheckInterceptor;
 import com.jein.mini.web.interceptor.ViewCheckInterceptor;
 
 import lombok.extern.java.Log;
 
-
-/**
- * Spring Interceptor 설정
- * 
- * @author JEINSOFT
- */
 @Log
 @Configuration
-public class InterceptorConfig implements WebMvcConfigurer {
-	
+public class InterceptorConfiguration implements WebMvcConfigurer {
 	@Bean
 	public ViewCheckInterceptor viewCheckInterceptor() {
 		return new ViewCheckInterceptor();
 	}
+
+	@Bean
+	public DataCheckInterceptor dataCheckInterceptor() {
+		return new DataCheckInterceptor();
+	}
 	
+	@Bean
+	public FileCheckInterceptor fileCheckInterceptor() {
+		return new FileCheckInterceptor();
+	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// TODO Auto-generated method stub
 		log.info("###### View Interceptor Setting #######");
 		registry.addInterceptor(viewCheckInterceptor()).addPathPatterns("/**/view/**");
-		registry.addInterceptor(new DataCheckInterceptor()).addPathPatterns("/**/data/**");
+		registry.addInterceptor(dataCheckInterceptor()).addPathPatterns("/**/data/**");
+		registry.addInterceptor(fileCheckInterceptor()).addPathPatterns("/**/file/**");
 	}
 
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

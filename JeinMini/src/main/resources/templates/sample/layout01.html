@@ -1,8 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<title>Layout page</title>
-	<script src="common-script.js"></script>
+	<meta charset="UTF-8"/>
+	
+	<script type="text/javascript" th:src="@{/webjars/jquery/3.3.1/dist/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/webjars/jqgrid/4.7.0/js/i18n/grid.locale-kr.js}"></script>	
+	<script type="text/javascript" th:src="@{/webjars/jqgrid/4.7.0/js/jquery.jqGrid.js}"></script>		
+	<script type="text/javascript" th:src="@{/js/common/jein_common.js}"></script>		
+	<script type="text/javascript" th:src="@{/js/common/jein_util.js}"></script>	
+	<link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.css}"/>		
+	<link rel="stylesheet" th:href="@{/webjars/jqgrid/4.7.0/css/ui.jqgrid.css}"/>
 </head>
 <body>
 	<header>
@@ -11,9 +19,8 @@
 	<section layout:fragment="content">
 		<p>Page content goes here</p>
 	</section>
-	<footer>
-		<p>My footer</p>
-		<p layout:fragment="custom-footer">Custom footer here</p>
-	</footer>
+	<div th:insert="sample/footer :: footerFragment">
+		<p>Custom footer here</p>
+	</div>
 </body>
 </html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>File Result</title>
+	<script type="text/javascript">
+		var uploadResult = JSON.parse('${file_upload_result}');
+		console.log(uploadResult);
+		
+		var resultCode = uploadResult.resultCode;		// ê²°ê³¼ ì½ë(S : ì±ê³µ, E : ì¤í¨)  
+		var resultMsg  = uploadResult.resultMsg;		// ê²°ê³¼ ë©ìì§
+		var callBackFunc = uploadResult.callBackFunc;	// ì½ë°± í¨ìëª
+		var fileList     = uploadResult.fileList;		// íì¼ ì ì¥ ì ë³´
+		console.log("resultCode   : " + resultCode);
+		console.log("resultMsg    : " + resultMsg);
+		console.log("callBackFunc : " + callBackFunc);
+		console.log(fileList);
+		
+		// ì ë¬ë°ì ì½ë°±í¨ìê° 
+		if( callBackFunc == undefined || callBackFunc == "" ) {
+			console.log("##### Call Back Function Is Null#####");
+			
+			if (parent.window.showAttachFiles != undefined){
+				parent.showAttachFiles(fileInfo);
+			}
+		} else {
+			console.log("##### Call Back Function #####");
+			
+			var callback = eval("parent.window." + callBackFunc);
+			if( callback != undefined ) {
+				console.log("##### Call Back Function => Call #####");
+				
+				callback(resultCode, resultMsg, fileList);
+			}
+		}	
+	</script>
+</head>
+<body>
+
+</body>
+</html>

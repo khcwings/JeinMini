@@ -1,0 +1,38 @@
+# 개발 환경 구성 
+	- JAVA : 1.8.0_191
+	- eclipse : Neon(Eclipse IDE for Java EE Developers 64bit)
+	- 
+
+# Spring Boot 
+	- 1.5.18
+
+# Spring 
+	- 4.3.21
+	
+# Start Dependencies
+	- WEB : Servlet
+	- Lombok : 컴파일시 자동으로 추가 메소드를 만들어 줌(예: Getter, Setter 등)
+	- DevTools : 컨트롤러의 소스코드를 수정하면 자동으로 스프링부트를 재시작
+	- JPA : Java를 이용해서 데이터를 관리하는 하나의 스펙(표준) - ORM 라이브러리
+	- Mysql : 데이터베이스
+	- Jdbc: DB Connection Pool 관리 라이브러리
+	- Mybatis : Mabatis를 사용하기 위해 설정
+	- Security : 스프링 보안 설정
+	- Thymeleaf :  HTML 태그 및 속성 기반의 Template Engine
+		* Version Change (하위 버전 버그로 인한 변경 - Project > pom.xml에서 변경한)
+			- thymeleaf.version : 3.0.6.RELEASE
+			- thymeleaf-extras-java8time.version : 3.0.0.RELEASE
+			- thymeleaf-layout-dialect.version : 2.2.2
+		
+# Maven Dependencies
+	- WebJars-jquery : 3.3.1
+	- WebJars-jquery-ui : 1.12.1
+	- WebJars-jqgrid : 4.7.0
+	- swagger2 : Rest API 확인
+	
+# Eclipse Plug-In(Install New Sofeware)
+	- Thymeleaf : http://www.thymeleaf.org/eclipse-plugin-update-site
+	- STS3 : http://download.springsource.com/release/TOOLS/update/e4.6/
+	
+# Profile 적용하기
+	- VM arguments에 [-Dspring.profiles.active=local] 설정 추가

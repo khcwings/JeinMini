@@ -38,6 +38,9 @@ public class SampleController {
 		log.info(param.toString());
 		model.addAttribute("sampleTitle", "Sample Controller Title");
 		model.addAttribute("sampleUText", "<h3 style='color:red;'>Sample Controller Title</h3>");
+		
+
+		model.addAttribute("footerInfo", "[샘플-Controller]Sample Footer Test");
 	}
 	
 	@GetMapping("/view/layout01")

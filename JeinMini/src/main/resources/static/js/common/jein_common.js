@@ -4,6 +4,54 @@
 
 var jcm = {};
 
+jcm.doAjaxFileForm = function(formId, _callbackFunc) {
+	// 파일 저장 폼 정보
+	var formData = new FormData($("#" + formId)[0]);
+	
+	// 로딩바 노출
+	jcm.showLoadingBar();
+	
+	$.ajax({
+		type : 'post',
+		url : '/mini/file/common/fileUpload',
+		data : formData,
+		processData : false,
+		contentType : false,
+		success : function(res) {
+			// 로딩바 종료
+			jcm.hideLoadingBar();
+			if(jut.isObj(_callbackFunc)) {
+				_callbackFunc(res);
+			}			
+			alert("파일 업로드하였습니다.");
+		},
+		error : function(error) {
+			// 로딩바 종료
+			jcm.hideLoadingBar();
+			
+			alert("파일 업로드에 실패하였습니다.");
+			
+			console.log(error);
+			console.log(error.status);
+		}
+	});
+};
+
+/**
+ * 로딩바를 보여준다. 
+ */
+jcm.showLoadingBar = function() {
+	console.log("##### showLoadingBar #####");
+};
+
+/**
+ * 로딩바를 종료한다. 
+ */	
+jcm.hideLoadingBar = function() {
+	console.log("##### hideLoadingBar #####");
+};
+
+
 /**
  * 입력받은 날짜가 유효한 날짜인지 체크
  * @method	isDateCheck
@@ -82,25 +130,7 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 	});
 };
 	
-/**
- * 로딩바를 보여준다. 
- * @method	showLoadingBar
- * @param	{Object|String}[_isFlag]
- * @return	{boolean} undefined 이면 true, 아니면 false
- */
-jcm.showLoadingBar = function(_isFlag) {
-	console.log("##### showLoadingBar : " + _isFlag);
-};
 
-/**
- * 로딩바를 종료한다. 
- * @method	showLoadingBar
- * @param	{Object|String}[_isFlag]
- * @return	{boolean} undefined 이면 true, 아니면 false
- */	
-jcm.hideLoadingBar = function(_isFlag) {
-	console.log("##### hideLoadingBar : " + _isFlag);
-};
 
 /**
  * 쿠키를 생성한다. 
