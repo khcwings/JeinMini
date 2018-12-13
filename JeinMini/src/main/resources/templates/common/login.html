@@ -1,0 +1,72 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>Jein Soft</title>		
+	<link rel="stylesheet" th:href="@{/css/sample/bootstrap.min.css}"/>
+	<link rel="stylesheet" th:href="@{/css/sample/signin.css}"/>
+	<script type="text/javascript" th:src="@{/webjars/jquery/3.3.1/dist/jquery.min.js}"></script>	
+	<script type="text/javascript" th:src="@{/js/common/jein_common.js}"></script>		
+	<script type="text/javascript" th:src="@{/js/common/jein_util.js}"></script>	
+	<script type="text/javascript">
+		var cookieUserId = "JEIN_USER_ID";
+		function reqLogin() {
+			if(jut.isEmpty($("#userId").val())) {
+				alert("ID를 입력해주세요. ");
+				$("#userID").focus();
+				return;
+			}
+			
+			if(jut.isEmpty($("#userPwd").val())) {
+				alert("Password를 입력해주세요. ");
+				$("#userPwd").focus();
+				return;
+			}
+			
+			// ID Cookie 등록
+			if($("#userRemember").is(":checked")) {
+				jcm.setCookieDay(cookieUserId, $("#userId").val(), 365);
+			}
+			
+			jcm.doAjax(true, "[[ @{/common/data/loginProcess} ]]", {'userId':$("#userId").val(), 'userPwd':$("#userPwd").val()}, callbackLogin);
+		}
+		
+		function callbackLogin(res) {
+			console.log("##### LOGIN RES #####");
+			console.log(res);
+		}
+		
+		$(document).ready(function() {
+			// 패스워드에서 엔터키 입력시
+			$("#userPwd").keydown(function(event) {
+				if(event.keyCode == '13') {
+					reqLogin();
+				}
+			});
+			
+			// 쿠키에 등록된 유저 ID를 세팅
+			var userId = jcm.getCookie(cookieUserId);
+			if(!jut.isEmpty(userId)) {
+				$("#userId").val(userId);
+				$("#userRemember").attr("checked", true);
+			}
+		});
+	</script>
+</head>
+<body class="text-center">
+	<div class="form-signin">
+		<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+		<label for="userId" class="sr-only">ID</label> 
+		<input type="text" id="userId" class="form-control" placeholder="ID" required autofocus> 
+		<label for="userPwd" class="sr-only">Password</label> 
+		<input type="password" id="userPwd" class="form-control" placeholder="Password" required>
+		<div class="checkbox mb-3">
+			<label> 
+				<input type="checkbox" id="userRemember" value="remember-me"> Remember me
+			</label>
+		</div>
+		<button class="btn btn-lg btn-primary btn-block" onclick="javascript:reqLogin();">Sign in</button>
+		<p class="mt-5 mb-3 text-muted">&copy; 2013-2018</p>
+	</div>
+</body>
+</html>

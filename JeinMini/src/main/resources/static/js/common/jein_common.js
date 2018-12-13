@@ -37,42 +37,6 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 	});
 };
 
-/**
- * 로딩바를 보여준다. 
- */
-jcm.showLoadingBar = function() {
-	console.log("##### showLoadingBar #####");
-};
-
-/**
- * 로딩바를 종료한다. 
- */	
-jcm.hideLoadingBar = function() {
-	console.log("##### hideLoadingBar #####");
-};
-
-
-/**
- * 입력받은 날짜가 유효한 날짜인지 체크
- * @method	isDateCheck
- * @param	{String}[_cal] 날짜
- * @return	{boolean}동일한 날짜면 true 아니면 false
- */
-jcm.isDateCheck = function(_cal) {
-	if(!jcm.isObj(_cal) || _cal.length < 8) {
-		return false;
-	}
-	var year  = parseInt(_cal.substring(0, 4));
-	var month = parseInt(_cal.substring(4, 6)) -1;
-	var day   = parseInt(_cal.substring(6, 8));	
-	
-	var cDate = new Date(year, month, day);
-	if(cDate.getFullYear() != year || cDate.getMonth() != month || cDate.getDate() != day) {
-		return false;
-	}
-	return true;
-};
-
 jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 	var isLoadingBar = true; 	// 로딩바는 디스플레이가 기본 옵션
 	var reqMethod    = "POST"; 	// Request에 사용될 HTTP method
@@ -117,7 +81,10 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 			console.log(data);
 			// 로딩바 종료
 			jcm.hideLoadingBar(isLoadingBar);
-			if(jut.isObj(_callbackFunc)) {
+			// 리턴값에 리다이렉트 URL이 존재한다면
+			if(!jut.isEmpty(data.redirectUrl)) {
+				window.location =  data.redirectUrl;
+			} else if(jut.isObj(_callbackFunc)) {
 				_callbackFunc(data);
 			}
 		},
@@ -129,7 +96,20 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 		}
 	});
 };
-	
+
+/**
+ * 로딩바를 보여준다. 
+ */
+jcm.showLoadingBar = function() {
+	console.log("##### showLoadingBar #####");
+};
+
+/**
+ * 로딩바를 종료한다. 
+ */	
+jcm.hideLoadingBar = function() {
+	console.log("##### hideLoadingBar #####");
+};
 
 
 /**
@@ -140,7 +120,7 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
  */
 jcm.setCookieDate = function(name, value, expiresDate) {
 	var date = new Date();
-	if(jcm.isObj(expiresDate) && jcm.isDateCheck(expiresDate)) {
+	if(jut.isEmpty(expiresDate) && jut.isDateCheck(expiresDate)) {
 		date = new Date(expiresDate.substring(0, 4), parseInt(expiresDate.substring(4, 6) - 1), expiresDate.substring(6, 8));
 	}
 	date.setHours(23, 59, 59, 999);
@@ -154,7 +134,7 @@ jcm.setCookieDate = function(name, value, expiresDate) {
  * @param expiresDay	쿠키 저장 기간(예:90[90일])
  */
 jcm.setCookieDay = function(name, value, expiresDay) {
-	if(!jcm.isObj(expiresDay)) {
+	if(jut.isEmpty(expiresDay)) {
 		expiresDay = 0;
 	}
 	var date = new Date();

@@ -13,6 +13,7 @@
 # Excel Upload
 
 # 보안
+  - 암호화 모듈 개발
 
 # REST API
   - Swagger : http://localhost:8080/mini/swagger-ui.html#/

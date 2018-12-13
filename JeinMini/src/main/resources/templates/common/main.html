@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+		layout:decorate="~{sample/layout01}">
+<head>
+	<meta charset="UTF-8"/>
+	<title th:text="${viewName}">Main</title><!-- request.getAttribute -->
+	<script type="text/javascript">
+		console.log("Sample 03 Header Script");
+		console.log(encodeURI("26a5Vk:NQGUbEACamJYfLH"));
+		function callbackSampleFileUpload(res) {
+			console.log("##### callbackSampleFileUpload #####");
+			console.log(res);
+			$.each(res.FILE_LIST, function(idx, obj) {
+				$("#fileList").append("<a href=\"/mini/file/common/downloadFile?fileId=" + obj.fileId+ "\">" + obj.fileName + " (" + obj.fileSize + ")"+ "</a><br/>");
+			});
+		}
+	</script>
+</head>
+<body>
+	<section layout:fragment="content">
+		<h1 th:text="${sampleTitle}">Thymeleaf Test Page</h1>
+		<div>
+			<p>Html-text : </p><p th:text="${sampleUText}"></p>
+			<br/>
+			<p>Html-utext : </p><p th:utext="${sampleUText}"></p>
+			<p>Get Content Path : </p><p th:text="${#request.getContextPath()}"></p>
+		</div>
+		<div>
+			<form id="fileUpload" name="fileUpload" enctype="multipart/form-data">
+				<input type="hidden" name="uploadCallback" value="callbackFileUpload"/>
+				<input type="hidden" name="uploadPath"     value="biz.jein"/>
+				<input type="file"   name="uploadFile"  multiple onchange="javascript:jcm.doAjaxFileForm('fileUpload', callbackSampleFileUpload);"/>
+			</form>
+		</div>
+		<p>File Download List</p>
+		<div id="fileList"></div>
+	</section>
+</body>
+</html>

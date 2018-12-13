@@ -34,12 +34,44 @@ jut.isNull = function(_obj){
  * @param	{Object}[_obj] 판별할 객체
  * @return	{boolean}_obj가 null이 아니거나 undefined 이면 false, 아니면 true
  */
-jut.isObj = function isObj(_obj){
+jut.isObj = function(_obj){
 	if( !jut.isUndefined(_obj) && !jut.isNull(_obj) ){
 		return true;
 	}else{
 		return false;
 	}
+};
+
+/**
+ * Object가 빈 값인지 판단
+ */
+jut.isEmpty = function(_obj){
+	if( jut.isUndefined(_obj) || jut.isNull(_obj) || _obj == "" ){
+		return true;
+	}else{
+		return false;
+	}
+};
+
+/**
+ * 입력받은 날짜가 유효한 날짜인지 체크
+ * @method	isDateCheck
+ * @param	{String}[_cal] 날짜
+ * @return	{boolean}동일한 날짜면 true 아니면 false
+ */
+jut.isDateCheck = function(_cal) {
+	if(jut.isEmpty(_cal) || _cal.length < 8) {
+		return false;
+	}
+	var year  = parseInt(_cal.substring(0, 4));
+	var month = parseInt(_cal.substring(4, 6)) -1;
+	var day   = parseInt(_cal.substring(6, 8));	
+	
+	var cDate = new Date(year, month, day);
+	if(cDate.getFullYear() != year || cDate.getMonth() != month || cDate.getDate() != day) {
+		return false;
+	}
+	return true;
 };
 
 /**
