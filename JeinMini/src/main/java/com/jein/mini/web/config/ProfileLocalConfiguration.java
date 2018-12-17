@@ -8,8 +8,8 @@ import org.springframework.context.annotation.PropertySources;
 @Configuration
 @Profile("local")
 @PropertySources({
-	@PropertySource(name="file",   value="classpath:/properties/file/file-local.properties"),
-	@PropertySource(name="file",   value="classpath:/properties/security/security-local.properties")
+	@PropertySource(name="file",   		value="classpath:/properties/file/file-local.properties"),
+	@PropertySource(name="security",  	value="classpath:/properties/security/security-local.properties")
 })
 public class ProfileLocalConfiguration {
 
