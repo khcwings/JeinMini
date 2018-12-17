@@ -1,19 +1,50 @@
 # 로그인
+  - 패스워드 3개월 변경
+  - 패스워드 5회이상 틀린 경우 잠김
+  - 패스워드 초기화(메일 사용)
+  - 쿠키를 이용한 ID 저장 : 완료
 
 # 메뉴 
-
+  - 메인 페이지
+  - 관리자 페이지
+    - 메뉴 등록
+    - 권한 생성
+    - 권한별 메뉴 등록
+    - 메뉴별 하위 Data 호출 URL 등록
+    - 유저별 권한 등록
+    - 공통 코드 관리
+    - 유저 관리
+      - 유저 등록 및 변경      
+  
 # 권한 관리
+  - Interceptor를 이용한 로그인/권한 체크
 
 # 그리드
 
+# UTIL 
+  - Key Generator : UUID를 이용한 32자리 String Key/16자리 이하의 long type Key 생성
+  
+# Service
+  - 암호화 : SHA-256, AES-128, AES-256를 이용한 암/복호화 서비스 개발(완료)
+  
 # File Upload / File Download
-
+  1. resources/properties/file/file-{Profile}.properties 설정
+  2. file.upload.max.size : 최대 저장 가능한 파일 크기(MB)
+  3. file.upload.extension.list : 저장 가능한 확장자 설정
+  4. file.upload.directory.temp : 임시저장 폴더
+  5. file.directory.default : 기본 저장 폴더
+  6. file.directory.{Job} : 업무별 저장 폴더
+  
 # Excel Create
 
 # Excel Upload
 
+# 메일 발송
+
 # 보안
   - 암호화 모듈 개발
+    Key : resources/properties/security/security-{Profile}.properties파일에 "security.aes.key"로 설정
+  - CSRF를 이용한 데이터 호출 체크
 
 # REST API
   - Swagger : http://localhost:8080/mini/swagger-ui.html#/
@@ -21,4 +52,23 @@
 # Batch
 
 # Profile
+  1. VM arguments에 [-Dspring.profiles.active=local] 설정 추가
+  2. Spring Boot 설정파일
+     application-{Profile}.properties
+  3. 파일업로드/다운로드
+     resources/properties/file/file-{Profile}.properties
+  4. LogBack 설정
+     resources/logback/logback-config-{Profile}.properties
 
+# Design 확인하기 
+  1. resources/templete/design/{파일명} 디자인 파일 생성 및 개발
+  2. http://localhost:8080/mini/sample/design/{파일명} 호출로 확인
+  
+ # 개발 완료 URL
+   - 로그인
+     http://localhost:8080/mini/common/login  jeinsoft/jein0915!
+   - Sample
+     http://localhost:8080/mini/sample/view/sample{01-03}
+   - Design
+     http://localhost:8080/mini/sample/design/{파일명}
+    

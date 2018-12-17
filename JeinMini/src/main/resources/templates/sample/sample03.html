@@ -28,8 +28,9 @@
 		</div>
 		<div>
 			<form id="fileUpload" name="fileUpload" enctype="multipart/form-data">
-				<input type="hidden" name="uploadCallback" value="callbackFileUpload"/>
-				<input type="hidden" name="uploadPath"     value="biz.jein"/>
+				<input type="hidden" name="uploadCallback" value="callbackFileUpload"/><!-- 콜백 함수 -->
+				<input type="hidden" name="uploadPath"     value="biz.jein"/><!-- 실 저장 경로 -->
+				<input type="hidden" name="uploadPreFix"   value="SAM"/><!-- Pre Fix Name -->
 				<input type="file"   name="uploadFile"  multiple onchange="javascript:jcm.doAjaxFileForm('fileUpload', callbackSampleFileUpload);"/>
 			</form>
 		</div>

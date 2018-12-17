@@ -8,7 +8,8 @@ import org.springframework.context.annotation.PropertySources;
 @Configuration
 @Profile("dev")
 @PropertySources({
-	@PropertySource(name="file",   value="classpath:/properties/file/file-dev.properties")
+	@PropertySource(name="file",   value="classpath:/properties/file/file-dev.properties"),
+	@PropertySource(name="file",   value="classpath:/properties/security/security-dev.properties")
 })
 public class ProfileDevConfiguration {
 

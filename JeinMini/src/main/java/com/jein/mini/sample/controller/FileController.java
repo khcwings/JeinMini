@@ -41,6 +41,11 @@ public class FileController {
 	@Autowired
 	private ServletContext servletContext;
 
+	/**
+	 * 파일을 업로드 한다. 
+	 * @param request
+	 * @return
+	 */
 	@PostMapping("/fileUpload")
 	@ResponseBody
     public Map<String, Object> uploadFile(HttpServletRequest request) {
@@ -52,11 +57,12 @@ public class FileController {
         Map<String, Object> tempFileResult	= null;
         
         // 1. Client에서 전송한 파일을 저장할 경로 정보를 획득
-     	String uploadPath = DataUtil.getString(request, FileConstant.FILE_UPLOAD_PATH_KEY, "");
-     	LOG.debug("##### Client File Upload Path : " + uploadPath);
+     	String uploadPath   = DataUtil.getString(request, FileConstant.FILE_UPLOAD_PATH_KEY, "");
+     	String uploadPreFix = DataUtil.getString(request, FileConstant.FILE_UPLOAD_PRE_FIX, "");
+     	LOG.debug("##### Client File [Upload Path : " + uploadPath + ", Upload PreFix : " + uploadPreFix + "]");
      	
      	// 2. 파일을 임시 저장한다. 
-     	tempFileResult = FileManager.getInstance().createTempFiles(request, "");     	
+     	tempFileResult = FileManager.getInstance().createTempFiles(request, uploadPreFix);     	
      	LOG.debug(tempFileResult.toString());
      	
      	// 3. 임시 저장이 성공일 경우 파일을 실제 저장 경로로 이동한다.
@@ -79,6 +85,12 @@ public class FileController {
 		return result;
     }
 	
+	/**
+	 * 파일 아이디를 전달받아 파일을 다운로드 한다. 
+	 * @param param
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping("/downloadFile")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam Map<String, Object> param, HttpServletRequest request) {
 		

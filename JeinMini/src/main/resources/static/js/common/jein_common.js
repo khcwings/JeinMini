@@ -1,9 +1,11 @@
-/**
- * 
- */
+var jcm = {
+	constant : {
+		result_success : "S"	// 성공
+		, result_error : "E"	// 실패
+	}
+};
 
-var jcm = {};
-
+// AJAX를 이용하여 파일 업로드
 jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 	// 파일 저장 폼 정보
 	var formData = new FormData($("#" + formId)[0]);
@@ -17,26 +19,26 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 		data : formData,
 		processData : false,
 		contentType : false,
-		success : function(res) {
+		success : function(res) {								// HTTP 성공
 			// 로딩바 종료
 			jcm.hideLoadingBar();
-			if(jut.isObj(_callbackFunc)) {
-				_callbackFunc(res);
-			}			
-			alert("파일 업로드하였습니다.");
+			if(jcm.constant.result_success == res.resultCode) {		// 응답코드가 성공인 경우
+				if(jut.isObj(_callbackFunc)) {
+					_callbackFunc(res);
+				}
+			} else {												// 응답코드가 실패인 경우
+				alert(res.resultMsg);
+			}
 		},
-		error : function(error) {
+		error : function(error) {								// HTTP 실패
 			// 로딩바 종료
-			jcm.hideLoadingBar();
-			
+			jcm.hideLoadingBar();			
 			alert("파일 업로드에 실패하였습니다.");
-			
-			console.log(error);
-			console.log(error.status);
 		}
 	});
 };
 
+// AJAX를 이용하여 서비스를 요청한다. 
 jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 	var isLoadingBar = true; 	// 로딩바는 디스플레이가 기본 옵션
 	var reqMethod    = "POST"; 	// Request에 사용될 HTTP method
@@ -97,16 +99,12 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 	});
 };
 
-/**
- * 로딩바를 보여준다. 
- */
+// 로딩바를 보여준다.
 jcm.showLoadingBar = function() {
 	console.log("##### showLoadingBar #####");
 };
 
-/**
- * 로딩바를 종료한다. 
- */	
+// 로딩바를 종료한다.
 jcm.hideLoadingBar = function() {
 	console.log("##### hideLoadingBar #####");
 };

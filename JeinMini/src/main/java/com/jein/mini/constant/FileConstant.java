@@ -10,4 +10,5 @@ public class FileConstant {
 	
 	public static final String FILE_UPLOAD_PATH_KEY	= "uploadPath";
 	public static final String FILE_UPLOAD_KEY		= "uploadFile";
+	public static final String FILE_UPLOAD_PRE_FIX	= "uploadPreFix";
 }
