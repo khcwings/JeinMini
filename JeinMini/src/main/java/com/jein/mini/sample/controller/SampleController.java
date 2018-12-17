@@ -6,10 +6,13 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.java.Log;
 
@@ -17,6 +20,15 @@ import lombok.extern.java.Log;
 @Controller
 @RequestMapping(value="/sample")
 public class SampleController {
+	
+	@RequestMapping(value = {"/design/{pageId}"}, method = {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView getViewDesign(@PathVariable("pageId") String pageId) {
+		log.info("###### Design : VIEW START ######");
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("/design/" + pageId);
+		return mav;
+	}
+	
 	
 	@GetMapping("/view/sample01")
 	public void getViewSample01(Model model, @RequestParam Map<String, Object> param) {
