@@ -26,7 +26,7 @@ import com.jein.mini.constant.CommonMessageConstrant;
 
 @Service
 public class MailService {
-	private static final Logger LOG = LoggerFactory.getLogger(JeinMiniApplicationTests.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
 
 	@Autowired
 	private JavaMailSender mailSender;
