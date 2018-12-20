@@ -36,3 +36,13 @@
 	
 # Profile 적용하기
 	- VM arguments에 [-Dspring.profiles.active=local] 설정 추가
+
+# 이슈 사항
+	- Javax.mail
+	  Spring Boot(1.5.18)에서 설정하는 Javax.mail을 1.5.6 버전이며, 해당 버전 및 상위 버전은 
+	  첨부되는 파일의 파일명 크기가 60Byte 이상인 경우 파일 첨부가 되지 않는 오류가 있음. 
+	  이를 해결하기 위해 하위 버전인 1.4.7 버전으로 변경하는 설정 추가(pom.xml)
+	- Thymeleaf
+	  Spring Boot(1.5.18)에서 설정하는 Thymeleaf 설정은 Layout 설정이 되지 않는 등에 오류가 있음.
+	  이를 해결하기 위해 3.0.6버전으로 변경하는 설정 추가(pom.xml)
+	  

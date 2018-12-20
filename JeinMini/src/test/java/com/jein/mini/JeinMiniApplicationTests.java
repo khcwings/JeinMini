@@ -51,15 +51,33 @@ public class JeinMiniApplicationTests {
 
 	@Test
 	public void insertMenu() {
-		for(int i = 1; i < 5; i++) {
 		CommonMenu menu = new CommonMenu();
+		for(int i = 1; i < 5; i++) {
 
-		menu.setMenuId("SAMPLE0" + i);
-		menu.setMenuUrl("/sample/view/sample0" + i);
-		menu.setMenuName("샘플 0" + i);
-		menu.setMenuPath("/sample/sample0" + i);
-		menuRepo.save(menu);
+
+			menu.setMenuId("SAMPLE0" + i);
+			menu.setMenuUrl("/sample/view/sample0" + i);
+			menu.setMenuName("샘플 0" + i);
+			menu.setMenuPath("/sample/sample0" + i);
+			menu.setMenuType("VIEW");
+			menuRepo.save(menu);
 		}
+
+		// 팝업 페이지
+		menu.setMenuId("CM00003");
+		menu.setMenuUrl("/sample/view/layerPopup");
+		menu.setMenuName("레이어 팝업");
+		menu.setMenuPath("/sample/layerPopup");
+		menu.setMenuType("POPUP");
+		menuRepo.save(menu);
+		
+		// 윈도우 팝업 페이지
+		menu.setMenuId("CM00004");
+		menu.setMenuUrl("/common/popup/windowPopup01");
+		menu.setMenuName("윈도우 팝업 유형 01");
+		menu.setMenuPath("/layout/windowPopup01");
+		menu.setMenuType("POPUP");
+		menuRepo.save(menu);
 	}
 
 	@Test
@@ -70,6 +88,7 @@ public class JeinMiniApplicationTests {
 		menu.setMenuUrl("/common/login");
 		menu.setMenuName("로그인");
 		menu.setMenuPath("/common/login");
+		menu.setMenuType("COMMON");
 		menuRepo.save(menu);
 
 		// 공통 메인 페이지
@@ -77,6 +96,7 @@ public class JeinMiniApplicationTests {
 		menu.setMenuUrl("/common/view/main");
 		menu.setMenuName("메인");
 		menu.setMenuPath("/common/main");
+		menu.setMenuType("VIEW");
 		menuRepo.save(menu);
 	}
 
@@ -103,25 +123,24 @@ public class JeinMiniApplicationTests {
 		List<String> receiver = new ArrayList<String>();
 		receiver.add("khcwings@jeinsoft.co.kr");
 		receiver.add("khcwings@naver.com");
-		
+
 		List<String> attachFiles = new ArrayList<String>();
 		attachFiles.add("C:\\FileTest\\Biz\\Jein\\계약관리안내문.pdf");
-		
+
 		String content = "안녕하세요.\n\r김희철입니다.\n\r\n\r메일 발송 테스트 중입니다.\n\n이상입니다.";
-		
-		LOG.debug("##### TEST MAIL SEND START 1 #####");
+
 		// 1인 Text Mail Text
-		mailService.sendTextMail("khcwings@jeinsoft.co.kr", "[1인]JEIN MINI TEST => TEXT MAIL", content);
-		// 다수 Text Mail Text
-		mailService.sendTextMail(receiver, "[다수]JEIN MINI TEST => TEXT MAIL", content);
+		//mailService.sendTextMail("khcwings@jeinsoft.co.kr", "[1인]JEIN MINI TEST => TEXT MAIL", content);
+		//// 다수 Text Mail Text
+		//mailService.sendTextMail(receiver, "[다수]JEIN MINI TEST => TEXT MAIL", content);
 		// 다수 Text Mail Text 첨부
 		mailService.sendTextMail(receiver, "[다수]JEIN MINI TEST => TEXT MAIL + FILE", content, attachFiles);
-		
-		
+
+
 		// 1인 Template Mail Text
-		mailService.sendTemplateMail("mail/mailSampleTemplate", "khcwings@jeinsoft.co.kr", "[1인 ]JEIN MINI TEST => TEMPLATE MAIL", model);
+		//mailService.sendTemplateMail("mail/mailSampleTemplate", "khcwings@jeinsoft.co.kr", "[1인 ]JEIN MINI TEST => TEMPLATE MAIL", model);
 		// 다수 Template Mail Text
-		mailService.sendTemplateMail("mail/mailSampleTemplate", receiver, "[다수]JEIN MINI TEST => TEMPLATE MAIL", model);
+		//mailService.sendTemplateMail("mail/mailSampleTemplate", receiver, "[다수]JEIN MINI TEST => TEMPLATE MAIL", model);
 		// 다수 Template Mail Text 첨부
 		mailService.sendTemplateMail("mail/mailSampleTemplate", receiver, "[다수]JEIN MINI TEST => TEMPLATE MAIL + FILE", model, attachFiles);
 		LOG.debug("##### TEST MAIL SEND END #####");

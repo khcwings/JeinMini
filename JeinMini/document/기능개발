@@ -23,11 +23,11 @@
 # 그리드
 
 # UTIL 
-  - Key Generator : UUID를 이용한 32자리 String Key/16자리 이하의 long type Key 생성
+  - Key Generator(완료) : UUID를 이용한 32자리 String Key/16자리 이하의 long type Key 생성
   
 # Service
-  - 암호화 : SHA-256, AES-128, AES-256를 이용한 암/복호화 서비스 개발(완료)
-  - 메일 발송
+  - 암호화 : SHA-256, AES-128, AES-256를 이용한 암/복호화 서비스 개발 - (완료)
+  - 메일 발송 : SMTP를 이용한 메일 발송 - (완료)
   
 # File Upload / File Download
   1. resources/properties/file/file-{Profile}.properties 설정
@@ -42,16 +42,14 @@
 # Excel Upload
 
 # 메일 발송
-  - javax.mail : 1.5.6 버전이 첨부파일 제목이 60Byte 제한에 걸려 있음. 
-                 버전 변경 방법이 필요함. 
-  - 메일 발송 히스토리 저장  
+  - 메일 발송 히스토리 저장 - (완료)
   - application-{Profile}.properties 에 메일 관련 설정(비번 설필 필요) - (완료)
-  - 1인에게 텍스트 메일 보내기(완료)
-  - 다수에게 텍스트 메일 보내기(완료)
-  - 텍스트 메일 파일 첨부하여 보내기(완료)
-  - 1인에게 템플릿 메일 보내기(완료)
-  - 다수에게 템플릿 메일 보내기(완료)
-  - 템플릿 메일 파일 첨부하여 보내기(완료)
+  - 1인에게 텍스트 메일 보내기 - (완료)
+  - 다수에게 텍스트 메일 보내기 - (완료)
+  - 텍스트 메일 파일 첨부하여 보내기 - (완료)
+  - 1인에게 템플릿 메일 보내기 - (완료)
+  - 다수에게 템플릿 메일 보내기 - (완료)
+  - 템플릿 메일 파일 첨부하여 보내기 - (완료)
 
 # 보안
   - 암호화 모듈 개발
@@ -84,3 +82,22 @@
    - Design
      http://localhost:8080/mini/sample/design/{파일명}
     
+ # Script 기능
+   - AJAX
+     1. 파일 업로드
+     2. 데이터 통신
+   - Popup
+     1. Layer Popup - (완료)
+        jquery load 이용하여 페이지 호출
+     2. Window Popup - (완료)
+        Window Popup Layout Template Open
+        Template에서 jquery load 이용하여 페이지 호출
+     3. 기본 Popup Design 적용
+   - Grid
+   - Cookie
+     1. Cookie 업데이트
+     2. Cookie 가져오기
+   - 로딩바
+     1. 로딩바 보이기
+     2. 로딩바 숨기기
+     

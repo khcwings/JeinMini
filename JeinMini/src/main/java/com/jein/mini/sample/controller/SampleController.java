@@ -29,6 +29,13 @@ public class SampleController {
 		return mav;
 	}
 	
+	@RequestMapping(value = {"/view/layerPopup"},  method = {RequestMethod.GET, RequestMethod.POST})
+	public void getViewLayerPopup(Model model, @RequestParam Map<String, Object> param) {
+		log.info("###### Sample 02 : VIEW START ######");
+		log.info(param.toString());
+		model.addAttribute("Sample", "test1234");
+	}
+	
 	
 	@GetMapping("/view/sample01")
 	public void getViewSample01(Model model, @RequestParam Map<String, Object> param) {

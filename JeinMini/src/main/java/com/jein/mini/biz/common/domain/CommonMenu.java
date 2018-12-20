@@ -28,6 +28,7 @@ public class CommonMenu {
 	private String menuPath;
 	private String upperMenuId;
 	private Integer menuLevel;
+	private String menuType; // COMMON, VIEW, POPUP 
 	
 	private String createId;
 	@CreationTimestamp

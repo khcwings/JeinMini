@@ -7,7 +7,7 @@ var jut = {};
  * @return	{boolean} undefined 이면 true, 아니면 false
  */
 jut.isUndefined	= function(_obj){
-	if(_obj === undefined){
+	if(_obj === undefined || _obj === "undefined"){
 		return true;
 	}else{
 		return false;
@@ -52,6 +52,25 @@ jut.isEmpty = function(_obj){
 		return false;
 	}
 };
+
+// 특정 html 문자열을 변환한다. 
+jut.htmlEscape = function(_obj) {
+	return _obj.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/'/g, '&#039;')
+		.replace(/"/g, '&quot;');
+};
+
+// 변환된 특정 html 문자열을 되돌린다. 
+jut.htmlUnEscape = function(_obj) {
+	return _obj.replace(/&amp;/g, '&')
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&#039;/g, '\'')
+		.replace(/&quot;/g, '\"');
+};
+
 
 /**
  * 입력받은 날짜가 유효한 날짜인지 체크

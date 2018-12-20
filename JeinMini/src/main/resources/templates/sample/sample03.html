@@ -1,41 +1,105 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
-		layout:decorate="~{sample/layout01}">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{sample/layout01}">
 <head>
-	<meta charset="UTF-8"/>
-	<title th:text="${viewName}">SAMPLE 03</title><!-- request.getAttribute -->
-	<script type="text/javascript">
-		console.log("Sample 03 Header Script");
-		console.log(encodeURI("26a5Vk:NQGUbEACamJYfLH"));
-		function callbackSampleFileUpload(res) {
-			console.log("##### callbackSampleFileUpload #####");
-			console.log(res);
-			$.each(res.FILE_LIST, function(idx, obj) {
-				$("#fileList").append("<a href=\"/mini/file/common/downloadFile?fileId=" + obj.fileId+ "\">" + obj.fileName + " (" + obj.fileSize + ")"+ "</a><br/>");
-			});
-		}
-	</script>
+<meta charset="UTF-8" />
+<title th:text="${viewName}">SAMPLE 03</title>
+<!-- request.getAttribute -->
+<script type="text/javascript">
+	$(document).ready(function() {
+		console.log("################# SAMPLE 03 START #################");
+	});
+	function callbackSampleFileUpload(res) {
+		console.log("##### callbackSampleFileUpload #####");
+		console.log(res);
+		$.each(res.FILE_LIST, function(idx, obj) {
+			$("#fileList").append(
+					"<a href=\"/mini/file/common/downloadFile?fileId="
+							+ obj.fileId + "\">" + obj.fileName + " ("
+							+ obj.fileSize + ")" + "</a><br/>");
+		});
+	}
+	
+	function windowPopup() {
+		jcm.openWindowPopup($("#popupId").val(), '/sample/view/layerPopup', {target:'Window Open'},
+				$("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
+				.val(), $("#popupLeft").val());
+	}
+
+	function layerPopup() {
+		jcm.openLayerPopup($("#popupId").val(), '/sample/view/layerPopup', {target:'Layer Open'},
+				$("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
+						.val(), $("#popupLeft").val());
+	}
+</script>
 </head>
 <body>
 	<section layout:fragment="content">
-		<h1 th:text="${sampleTitle}">Thymeleaf Test Page</h1>
-		<div>
-			<p>Html-text : </p><p th:text="${sampleUText}"></p>
-			<br/>
-			<p>Html-utext : </p><p th:utext="${sampleUText}"></p>
-			<p>Get Content Path : </p><p th:text="${#request.getContextPath()}"></p>
+		<h2 th:text="${sampleTitle}">Thymeleaf Test Page</h2>
+		<div style="border: 2px solid #3571B5;">
+			<h1>Thymeleaf Sample</h1>
+			<p>Html-text :</p>
+			<p th:text="${sampleUText}"></p>
+			<br />
+			<p>Html-utext :</p>
+			<p th:utext="${sampleUText}"></p>
+			<p>Get Content Path :</p>
+			<p th:text="${#request.getContextPath()}"></p>
 		</div>
-		<div>
+		<div style="border: 2px solid #3571B5;">
+			<h1>Popup Open Sample</h1>
+			<table style="boder: 1px;">
+				<colgroup>
+					<col width="150px" />
+					<col width="200px" />
+				</colgroup>
+				<tbody>
+					<tr>
+						<td>Popup ID</td>
+						<td><input type="text" id="popupId" value="TestPopup"></td>
+					</tr>
+					<tr>
+						<td>Width</td>
+						<td><input type="number" id="popupWidth" value="0"></td>
+					</tr>
+					<tr>
+						<td>Height</td>
+						<td><input type="number" id="popupHeight" value="0"></td>
+					</tr>
+					<tr>
+						<td>Top</td>
+						<td><input type="number" id="popupTop" value="0"></td>
+					</tr>
+					<tr>
+						<td>Left</td>
+						<td><input type="number" id="popupLeft" value="0"></td>
+					</tr>
+					<tr>
+						<td><button onClick="javascript:windowPopup();">Window
+								Open</button></td>
+						<td><button onClick="javascript:layerPopup();">Layer
+								Open</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div style="border: 2px solid #3571B5;">
+			<h1>File Upload/Download Sample</h1>
 			<form id="fileUpload" name="fileUpload" enctype="multipart/form-data">
-				<input type="hidden" name="uploadCallback" value="callbackFileUpload"/><!-- 콜백 함수 -->
-				<input type="hidden" name="uploadPath"     value="biz.jein"/><!-- 실 저장 경로 -->
-				<input type="hidden" name="uploadPreFix"   value="SAM"/><!-- Pre Fix Name -->
-				<input type="file"   name="uploadFile"  multiple onchange="javascript:jcm.doAjaxFileForm('fileUpload', callbackSampleFileUpload);"/>
+				<input type="hidden" name="uploadCallback"
+					value="callbackFileUpload" />
+				<!-- 콜백 함수 -->
+				<input type="hidden" name="uploadPath" value="biz.jein" />
+				<!-- 실 저장 경로 -->
+				<input type="hidden" name="uploadPreFix" value="SAM" />
+				<!-- Pre Fix Name -->
+				<input type="file" name="uploadFile" multiple
+					onchange="javascript:jcm.doAjaxFileForm('fileUpload', callbackSampleFileUpload);" />
 			</form>
+			<p>File Download List</p>
+			<div id="fileList"></div>
 		</div>
-		<p>File Download List</p>
-		<div id="fileList"></div>
 	</section>
 </body>
 </html>

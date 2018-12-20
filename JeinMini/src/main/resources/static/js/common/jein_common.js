@@ -1,7 +1,12 @@
 var jcm = {
-	constant : {
+	contentPath : '/mini'						    // Content Root Path
+	, fileUploadUrl : '/file/common/fileUpload'     // File Upload Url
+	, winPopupdUrl  : '/common/popup/windowPopup01' // File Upload Url
+	, constant : {
 		result_success : "S"	// 성공
 		, result_error : "E"	// 실패
+		, popup_width  : 400 	// 팝업 기본 넓이
+		, popup_height : 300 	// 팝업 기본 높이
 	}
 };
 
@@ -15,7 +20,7 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 	
 	$.ajax({
 		type : 'post',
-		url : '/mini/file/common/fileUpload',
+		url  : jcm.contentPath + jcm.fileUploadUrl,
 		data : formData,
 		processData : false,
 		contentType : false,
@@ -109,6 +114,162 @@ jcm.hideLoadingBar = function() {
 	console.log("##### hideLoadingBar #####");
 };
 
+// 레이어 팝업 오픈
+jcm.openLayerPopup = function(popupId, _url, _params, _popupWidth, _popupHeight, _popupTop, _popupLeft) {
+	if(jut.isEmpty(popupId)) {
+		alert("팝업 ID가 존재하지 않습니다.");
+		return "";
+	}
+	
+	if(jut.isEmpty(_url)) {
+		alert("팝업 URL이 존재하지 않습니다.");
+		return "";
+	}
+	var url = jcm.contentPath + _url;
+	
+	// 페이지를 호출시 전달될 파라미터 정보
+	var params = {};
+	if((typeof _params) === "object") {
+		params = _params;
+	}
+	
+	// 팝업 넓이값
+	var popupWidth = jcm.constant.popup_width;
+	if(!jut.isEmpty(_popupWidth) && Number(_popupWidth) > 0) {
+		popupWidth = Number(_popupWidth);
+	}
+	
+	// 팝업 높이값
+	var popupHeight = jcm.constant.popup_height;
+	if(!jut.isEmpty(_popupHeight) && Number(_popupHeight) > 0) {
+		popupHeight = Number(_popupHeight);
+	}
+	
+	// 팝업 위치 Top
+	var popupTop = 0;
+	if(!jut.isEmpty(_popupTop) && Number(_popupTop) > 0) {
+		popupTop = Number(_popupTop);
+	}
+	
+	// 팝업 위치 Left
+	var popupLeft = 0;
+	if(!jut.isEmpty(_popupLeft) && Number(_popupLeft) > 0) {
+		popupLeft = Number(_popupLeft);
+	}
+	
+	// 기존에 존재하는 동일한 ID의 레이어 팝업을 삭제한다. 
+	$("#" + popupId).remove();
+	
+	// 레이어 영역을 미리 생성한다. 
+	var layerPopupHtml = "<div class=\"dim-layer\" id=" + popupId + ">";
+	layerPopupHtml    += "	  <div class=\"dimBg\"></div>";
+	layerPopupHtml    += "    <div class=\"pop-layer\" style=\"width:" + popupWidth + "px;height:" + popupHeight + "px;\"></div>";
+	layerPopupHtml    += "</div>";			
+	$("body", top.document).append(layerPopupHtml);
+	
+	// 팝업 화면을 호출한다. 
+	$("#" + popupId + " .pop-layer").load(url, params, function(response, status, xhr) {
+		// 성공적으로 팝업 페이지가 Load됨
+		if(status == "success") {
+			// 닫기 버튼 추가
+			$("#" + popupId + " .pop-container").append("<div class=\"btn-r\"><a href=\"#\" class=\"btn-layerClose\">Close</a></div>");
+			
+			if(popupTop > 0 || popupLeft > 0) {
+				$("#" + popupId + " .pop-layer").css({top: popupTop, left: popupLeft});
+			} else {
+				// 팝업의 위치를 설정하기 위한 작업
+				var popupWidth  = $("#" + popupId + " .pop-layer").outerWidth();
+				var popupHeight = $("#" + popupId + " .pop-layer").outerHeight();
+	            var docWidth    = $(document).width();
+	            var docHeight   = $(document).height();
+
+		        // 화면의 중앙에 레이어를 띄운다.
+		        if (popupHeight < docHeight || popupWidth < docWidth) {
+		        	$("#" + popupId + " .pop-layer").css({
+		                marginTop: -popupHeight /2,
+		                marginLeft: -popupWidth/2
+		            })
+		        } else {
+		        	$("#" + popupId + " .pop-layer").css({top: 0, left: 0});
+		        }
+			}
+			
+			// 레이어 팝업을 노출한다. 
+			$("#" + popupId).show();
+			
+			// 레이어 팝업 닫기 이벤트
+			$("#" + popupId + " .pop-layer .btn-layerClose").click(function(){
+	            $("#" + popupId + " .dim-layer").fadeOut();// 닫기 버튼을 클릭하면 레이어가 닫힌다.
+	            $("#" + popupId).remove();
+	            return false;
+	        });
+		}				
+	});
+};
+
+jcm.openWindowPopup = function(popupID, _url, _params, _popupWidth, _popupHeight, _popupTop, _popupLeft, _resizable) {	
+	if(jut.isEmpty(popupId)) {
+		alert("팝업 ID가 존재하지 않습니다.");
+		return "";
+	}
+	
+	if(jut.isEmpty(_url)) {
+		alert("팝업 URL이 존재하지 않습니다.");
+		return "";
+	}
+	
+
+	// 페이지를 호출시 전달될 파라미터 정보
+	var params = {};
+	if((typeof _params) === "object") {
+		params = _params;
+	}
+	
+	// 페이지 오픈 URL
+	var url = jcm.contentPath + jcm.winPopupdUrl + "?openUrl=" + encodeURIComponent(_url) + "&openParams=" + encodeURIComponent(JSON.stringify(params));
+	
+	// 팝업 넓이값
+	var popupWidth = jcm.constant.popup_width;
+	if(!jut.isEmpty(_popupWidth) && Number(_popupWidth) > 0) {
+		popupWidth = Number(_popupWidth);
+	}
+	
+	// 팝업 높이값
+	var popupHeight = jcm.constant.popup_height;
+	if(!jut.isEmpty(_popupHeight) && Number(_popupHeight) > 0) {
+		popupHeight = Number(_popupHeight);
+	}
+	
+	// 팝업 위치 Top
+	var popupTop = (window.screen.height /2) - (popupHeight / 2); // 상하 크기 반환
+	if(!jut.isEmpty(_popupTop) && Number(_popupTop) > 0) {
+		popupTop = Number(_popupTop);
+	}
+	
+	// 팝업 위치 Left
+	var popupLeft =  (window.screen.width / 2) - (popupWidth / 2); //좌우 크기 반환
+	if(!jut.isEmpty(_popupLeft) && Number(_popupLeft) > 0) {
+		popupLeft = Number(_popupLeft);
+	}
+	
+	// Resize 가능 여부(IE에서만 동작함)
+	var resizable 	= "no";
+	if(!jut.isEmpty(_resizable) && _resizable == "yes") {
+		resizable = _resizable;
+	}
+	
+	var option 	= "scrollbars=yes,toolbar=no";
+	option 		+= ",resizable=" + resizable;
+	option 		+= ",width="  + popupWidth;
+	option 		+= ",height=" + popupHeight;
+	if(popupTop > 0 || popupLeft > 0) {
+		option 		+= ",top="  + popupTop;
+		option 		+= ",left=" + popupLeft;		
+	}
+	
+	var winPopup = window.open(url, popupID, option);
+	winPopup.focus();
+}
 
 /**
  * 쿠키를 생성한다. 
@@ -162,6 +323,33 @@ jcm.getCookie = function(_name) {
 	return "";
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Back Space의 기능을 차단한다. 
  * @method	setDisableKeyDown
@@ -178,64 +366,6 @@ jcm.setDisableKeyDown = function() {
 }
 
 
-jcm.openPopup = function(_url, _mode, _popupID, _param) {
-	 
-	var x			= "";
-	var y			= "";
-	var width		= "";
-	var height		= "";
-	var position	= "left";
-	var resizable 	= "no";
-	
-	if(jcm.isObj(_param)) {
-		x 			= !jcm.isUndefined(_param.x)?_param.x:x;
-		y 			= !jcm.isUndefined(_param.y)?_param.y:y;
-		width 		= !jcm.isUndefined(_param.width)?_param.width:width;
-		height		= !jcm.isUndefined(_param.height)?_param.height:height;
-		position 	= !jcm.isUndefined(_param.position)?_param.position:position;
-		resizable 	= !jcm.isUndefined(_param.resizable)?_param.resizable:resizable;
-	}
-	
-	
-	if(jcm.isObj(_mode) && _mode == "POPUP_WINDOW") {
-		if(!jcm.isObj(_popupID)){
-			_popupID = _url.substring( _url.lastIndexOf("/") != -1 ? 0 : _url.lastIndexOf("/") ).replace(/[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi, "");
-		}
 
-		window.open(
-			_url,
-			_popupID,
-			"scrollbars=yes"+
-			",toolbar=no" +
-			",resizable=" + resizable +
-			(!jcm.isObj(x) ? "":",left=" + x) +
-			(!jcm.isObj(y) ? "":",top=" + y) +
-			",width="  + (!jcm.isObj(width) ? 640 : width) + 
-			",height=" + (!jcm.isObj(height) ? 480 : height)
-		);
-		
-	} else if(jcm.isObj(_mode) && _mode == "POPUP_LAYER") {		
-		var realX            = (!jcm.isObj(x) ? 10  : x );
-		var realY            = (!jcm.isObj(y) ? 10  : y );
-		var readWidth        = (!jcm.isObj(width) ? 640 : width);
-		
-		var layerPopupModal  = $("<div class=\"layer_popup_modal\"></div>");
-		var layerPopup       = $("<div class=\"layer_popup\"></div>");
-		var layerPopupFrame  = $("<iframe frameborder=\"0\" allowTransparency='true'></iframe>");
-		
-		layerPopupFrame.css("width",  readWidth);
-		layerPopupFrame.attr("src", _url);
-		
-		layerPopup.append(layerPopupFrame);
-		
-		layerPopup.css("left", realX);
-		layerPopup.css("top",    realY);
-		layerPopup.css("width",  readWidth);
-		
-		$("body", top.document).append(layerPopupModal);
-		$("body", top.document).append(layerPopup);
-		
-	}
-}
 
 

@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
-import com.jein.mini.JeinMiniApplicationTests;
+import com.jein.mini.biz.common.domain.CommonHistoryMail;
+import com.jein.mini.biz.common.persistence.CommonHistoryMailRepository;
 import com.jein.mini.biz.common.vo.ResultVO;
 import com.jein.mini.constant.CommonConstant;
 import com.jein.mini.constant.CommonMessageConstrant;
+import com.jein.mini.util.DateTimeUtil;
 
 @Service
 public class MailService {
@@ -33,6 +35,9 @@ public class MailService {
 
 	@Autowired
 	private SpringTemplateEngine templateEngine;
+	
+	@Autowired
+	private CommonHistoryMailRepository commonHistoryMailRepo;
 
 	/**
 	 * 본문 내용이 TEXT로 된 메일을 발송한다. 
@@ -69,12 +74,15 @@ public class MailService {
 	 */
 	public ResultVO sendTextMail(List<String> receiverList, String subject, String content, List<String> attachFiles) {
 		LOG.debug("# [Mail Service]Send Text Mail Start");
-		ResultVO retVO = new ResultVO();
-
+		ResultVO retVO 		= new ResultVO();
+		String attachYn     = CommonConstant.VALUE_NO;
+		String tempReceiver = CommonConstant.VALUE_EMPTY;
 		if(receiverList == null || receiverList.isEmpty()) {
 			retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_RECEIVER);
+			saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_RECEIVER);
 		} else if(subject == null || subject.isEmpty()) {
 			retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_SUBJECT);
+			saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_SUBJECT);
 		} else {
 			try {
 				MimeMessage message = mailSender.createMimeMessage();
@@ -85,6 +93,7 @@ public class MailService {
 						if(!(filePath == null || filePath.isEmpty())) {
 							File file = new File(filePath);
 							helper.addAttachment(file.getName(), file);
+							attachYn = CommonConstant.VALUE_YES;
 						}
 					}
 				}
@@ -93,21 +102,26 @@ public class MailService {
 				helper.setSubject(subject);
 
 				for(String receiver :receiverList) {
+					tempReceiver = receiver;
 					helper.setTo(receiver);
 					mailSender.send(message);
+					saveHistory("", receiver, subject, attachYn, CommonConstant.RESULT_SUCCESS, CommonMessageConstrant.MAIL_SUCCESS_MSG);
 				}	
 			} catch(MailException e) {
 				e.printStackTrace();
 				LOG.error("# [Mail Service]Send Text Mail ERROR[MailException] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			} catch(MessagingException e) {
 				e.printStackTrace();
 				LOG.error("# [Mail Service]Send Text Mail ERROR[MessagingException] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			} catch(Exception e) {
 				e.printStackTrace();
-				LOG.error("# [Mail Service]Send Text Mail ERROR[MessagingException] => " + e.getMessage());
+				LOG.error("# [Mail Service]Send Text Mail ERROR[Exception] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			}	
 		}
 
@@ -153,14 +167,18 @@ public class MailService {
 	 */
 	public ResultVO sendTemplateMail(String templatePath, List<String> receiverList, String subject, Map<String, Object> model, List<String> attachFiles) {
 		LOG.debug("# [Mail Service]Send Template Mail Start");
-		ResultVO retVO = new ResultVO();
-
+		ResultVO retVO 		= new ResultVO();
+		String attachYn     = CommonConstant.VALUE_NO;
+		String tempReceiver = CommonConstant.VALUE_EMPTY;
 		if(templatePath == null || templatePath.isEmpty()) {
 			retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_TEMPLATE_PATH);
+			saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_TEMPLATE_PATH);
 		} else if(receiverList == null || receiverList.isEmpty()) {
 			retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_RECEIVER);
+			saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_RECEIVER);
 		} else if(subject == null || subject.isEmpty()) {
 			retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_SUBJECT);
+			saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_NO_SUBJECT);
 		} else {
 			try {
 				MimeMessage message = mailSender.createMimeMessage();
@@ -171,6 +189,7 @@ public class MailService {
 						if(!(filePath == null || filePath.isEmpty())) {
 							File file = new File(filePath);
 							helper.addAttachment(file.getName(), file);
+							attachYn = CommonConstant.VALUE_YES;
 						}
 					}
 				}			        			       
@@ -179,21 +198,26 @@ public class MailService {
 				helper.setSubject(subject);
 				
 				for(String receiver :receiverList) {
+					tempReceiver = receiver;
 					helper.setTo(receiver);
 					mailSender.send(message);
+					saveHistory("", receiver, subject, attachYn, CommonConstant.RESULT_SUCCESS, CommonMessageConstrant.MAIL_SUCCESS_MSG);
 				}			        
 			} catch(MailException e) {
 				e.printStackTrace();
 				LOG.error("# [Mail Service]Send Template Mail ERROR[MailException] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			} catch(MessagingException e) {
 				e.printStackTrace();
 				LOG.error("# [Mail Service]Send Template Mail ERROR[MessagingException] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			} catch(Exception e) {
 				e.printStackTrace();
-				LOG.error("# [Mail Service]Send Template Mail ERROR[MessagingException] => " + e.getMessage());
+				LOG.error("# [Mail Service]Send Template Mail ERROR[Exception] => " + e.getMessage());
 				retVO.setStatus(CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
+				saveHistory("", tempReceiver, subject, attachYn, CommonConstant.RESULT_ERROR, CommonMessageConstrant.MAIL_ERROR_UNKNOWN_EXCEPTION);
 			}	
 		}
 
@@ -215,5 +239,21 @@ public class MailService {
 			return templateEngine.process(templateName, context);
 		}
 		return "";
+	}
+	
+	private void saveHistory(String userId, String receiver, String subject, String attachYn, String resultCode, String resultMsg) {
+		try {
+			CommonHistoryMail history = new CommonHistoryMail();
+			history.setReqTime(DateTimeUtil.getCurrentDateTimeSSS());
+			history.setUserId(userId);
+			history.setSubject(subject);
+			history.setReceiver(receiver);
+			history.setAttachYn(attachYn.charAt(0));		
+			history.setResultCode(resultCode.charAt(0));
+			history.setResultMsg(resultMsg);
+			commonHistoryMailRepo.save(history);
+		} catch (Exception e) {
+			LOG.error("# [Mail Service]SAVE HISTORY ERROR : " + e.getMessage());
+		}		
 	}
 }

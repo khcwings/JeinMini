@@ -24,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.jein.mini.web.interceptor.DataCheckInterceptor;
 import com.jein.mini.web.interceptor.FileCheckInterceptor;
+import com.jein.mini.web.interceptor.PopupCheckInterceptor;
 import com.jein.mini.web.interceptor.ViewCheckInterceptor;
 
 import lombok.extern.java.Log;
@@ -45,12 +46,18 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
 	public FileCheckInterceptor fileCheckInterceptor() {
 		return new FileCheckInterceptor();
 	}
-
+	
+	@Bean
+	public PopupCheckInterceptor popupCheckInterceptor() {
+		return new PopupCheckInterceptor();
+	}
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// TODO Auto-generated method stub
-		log.info("###### View Interceptor Setting #######");
+		log.info("###### Interceptor Setting #######");
 		registry.addInterceptor(viewCheckInterceptor()).addPathPatterns("/**/view/**");
+		registry.addInterceptor(viewCheckInterceptor()).addPathPatterns("/**/popup/**");
 		registry.addInterceptor(dataCheckInterceptor()).addPathPatterns("/**/data/**");
 		registry.addInterceptor(fileCheckInterceptor()).addPathPatterns("/**/file/**");
 	}
