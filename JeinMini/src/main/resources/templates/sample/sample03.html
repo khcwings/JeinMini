@@ -9,28 +9,32 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		console.log("################# SAMPLE 03 START #################");
+		jcm.setDatepicker("jquiDatepicker1");
+		jcm.setDatepicker("jquiDatepicker2");
 	});
 	function callbackSampleFileUpload(res) {
 		console.log("##### callbackSampleFileUpload #####");
 		console.log(res);
 		$.each(res.FILE_LIST, function(idx, obj) {
 			$("#fileList").append(
-					"<a href=\"/mini/file/common/downloadFile?fileId="
+					"<a href=\"/mini/common/file/downloadFile?fileId="
 							+ obj.fileId + "\">" + obj.fileName + " ("
 							+ obj.fileSize + ")" + "</a><br/>");
 		});
 	}
-	
+
 	function windowPopup() {
-		jcm.openWindowPopup($("#popupId").val(), '/sample/view/layerPopup', {target:'Window Open'},
-				$("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
+		jcm.openWindowPopup($("#popupId").val(), '/sample/view/layerPopup', {
+			target : 'Window Open'
+		}, $("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
 				.val(), $("#popupLeft").val());
 	}
 
 	function layerPopup() {
-		jcm.openLayerPopup($("#popupId").val(), '/sample/view/layerPopup', {target:'Layer Open'},
-				$("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
-						.val(), $("#popupLeft").val());
+		jcm.openLayerPopup($("#popupId").val(), '/sample/view/layerPopup', {
+			target : 'Layer Open'
+		}, $("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
+				.val(), $("#popupLeft").val());
 	}
 </script>
 </head>
@@ -47,6 +51,33 @@
 			<p>Get Content Path :</p>
 			<p th:text="${#request.getContextPath()}"></p>
 		</div>
+		<div style="border: 2px solid #3571B5;">
+			<h1>Login User Info</h1>
+			<!-- Session에 userInfo값이 null이 아닌 경우에만 그려짐 -->
+			<div th:if="${session.userInfo}!=null" th:object="${session.userInfo}" >			
+				<p>
+					USER ID : <span th:text="*{userId}"></span>
+				</p>
+				<p>
+					USER Name : <span th:text="*{userName}"></span>
+				</p>
+				<p>
+					USER E-Mail : <span th:text="*{userEmail}"></span>
+				</p>
+				<p>
+					USER Phone : <span th:text="*{userPhone}"></span>
+				</p>
+			</div>
+			<div th:unless="${session.userInfo}!=null">
+				<p>로그인되지 않았습니다.</p>
+			</div>
+		</div>
+		<div style="border: 2px solid #3571B5;">
+			<h1>Jquery Ui Sample</h1>
+			<p>Date: <input type="text" id="jquiDatepicker1"></p>
+			<p>Date: <input type="text" id="jquiDatepicker2"></p>
+		</div>
+		
 		<div style="border: 2px solid #3571B5;">
 			<h1>Popup Open Sample</h1>
 			<table style="boder: 1px;">

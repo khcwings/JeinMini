@@ -1,12 +1,15 @@
 var jcm = {
-	contentPath : '/mini'						    // Content Root Path
-	, fileUploadUrl : '/file/common/fileUpload'     // File Upload Url
-	, winPopupdUrl  : '/common/popup/windowPopup01' // File Upload Url
+	contentPath     : '/mini'						// Content Root Path
+	, fileUploadUrl : '/common/file/fileUpload'     // File Upload Url
+	, winPopupdUrl  : '/common/popup/windowPopup01' // Window Open Url
+	, ajaxCallCount : 0
 	, constant : {
-		result_success : "S"	// 성공
-		, result_error : "E"	// 실패
-		, popup_width  : 400 	// 팝업 기본 넓이
-		, popup_height : 300 	// 팝업 기본 높이
+		result_success : "S"		// 성공
+		, result_error : "E"		// 실패
+		, popup_width  : 400 		// 팝업 기본 넓이
+		, popup_height : 300 		// 팝업 기본 높이
+		, popup_effect : "blind"	// 팝업 이벤트 효과
+		, popup_effect_time : 500	// 팝업 이벤트 효과 지속 시간
 	}
 };
 
@@ -14,9 +17,11 @@ var jcm = {
 jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 	// 파일 저장 폼 정보
 	var formData = new FormData($("#" + formId)[0]);
-	
 	// 로딩바 노출
-	jcm.showLoadingBar();
+	if(jcm.ajaxCallCount == 0) {
+		jcm.showLoadingBar();
+	}
+	jcm.ajaxCallCount++;
 	
 	$.ajax({
 		type : 'post',
@@ -26,7 +31,11 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 		contentType : false,
 		success : function(res) {								// HTTP 성공
 			// 로딩바 종료
-			jcm.hideLoadingBar();
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}
+			
 			if(jcm.constant.result_success == res.resultCode) {		// 응답코드가 성공인 경우
 				if(jut.isObj(_callbackFunc)) {
 					_callbackFunc(res);
@@ -37,7 +46,10 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 		},
 		error : function(error) {								// HTTP 실패
 			// 로딩바 종료
-			jcm.hideLoadingBar();			
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}			
 			alert("파일 업로드에 실패하였습니다.");
 		}
 	});
@@ -75,7 +87,10 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 	}
 	
 	// 로딩바 노출
-	jcm.showLoadingBar(isLoadingBar);
+	if(jcm.ajaxCallCount == 0) {
+		jcm.showLoadingBar();
+	}
+	jcm.ajaxCallCount++;
 
 	$.ajax({
 		url      : _url,
@@ -87,7 +102,11 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 			console.log("#### doAjax result sussess ####");
 			console.log(data);
 			// 로딩바 종료
-			jcm.hideLoadingBar(isLoadingBar);
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}
+			
 			// 리턴값에 리다이렉트 URL이 존재한다면
 			if(!jut.isEmpty(data.redirectUrl)) {
 				window.location =  data.redirectUrl;
@@ -97,7 +116,10 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 		},
 		error    : function() {
 			// 로딩바 종료
-			jcm.hideLoadingBar(isLoadingBar);
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}
 			
 			//showError("JS-AJAX", "error in javascript(doAjax).\nCheck server logs."); 
 		}
@@ -106,12 +128,18 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 
 // 로딩바를 보여준다.
 jcm.showLoadingBar = function() {
-	console.log("##### showLoadingBar #####");
+	console.log("##### showLoadingBar #####");		
+	var layerPopupHtml = "<div id=\"loadingBar\" class=\"dim-layer\" style=\"display:block;\">";
+	layerPopupHtml    += "	  <div class=\"dimBg\"></div>";
+	layerPopupHtml    += "	  <img alt=\"loading\" class=\"loadingImg\" src=\"/mini/images/lodingBar.gif\">";
+	layerPopupHtml    += "</div>";			
+	$("body", top.document).append(layerPopupHtml);
 };
 
 // 로딩바를 종료한다.
-jcm.hideLoadingBar = function() {
-	console.log("##### hideLoadingBar #####");
+jcm.hideLoadingBar = function(idx) {
+	console.log("##### hideLoadingBar #####");	
+	$("#loadingBar").remove();
 };
 
 // 레이어 팝업 오픈
@@ -195,18 +223,20 @@ jcm.openLayerPopup = function(popupId, _url, _params, _popupWidth, _popupHeight,
 			}
 			
 			// 레이어 팝업을 노출한다. 
-			$("#" + popupId).show();
+			$("#" + popupId).show(jcm.constant.popup_effect, {}, jcm.constant.popup_effect_time, function() {});
 			
 			// 레이어 팝업 닫기 이벤트
 			$("#" + popupId + " .pop-layer .btn-layerClose").click(function(){
-	            $("#" + popupId + " .dim-layer").fadeOut();// 닫기 버튼을 클릭하면 레이어가 닫힌다.
-	            $("#" + popupId).remove();
+				$("#" + popupId).hide(jcm.constant.popup_effect, {}, jcm.constant.popup_effect_time, function() {
+					$("#" + popupId).remove();
+				});
 	            return false;
 	        });
 		}				
 	});
 };
 
+// 윈도우 팝업 오픈
 jcm.openWindowPopup = function(popupID, _url, _params, _popupWidth, _popupHeight, _popupTop, _popupLeft, _resizable) {	
 	if(jut.isEmpty(popupId)) {
 		alert("팝업 ID가 존재하지 않습니다.");
@@ -323,32 +353,27 @@ jcm.getCookie = function(_name) {
 	return "";
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// 달력을 세팅한다. 
+jcm.setDatepicker = function(_objId, _format) {
+	if(jut.isEmpty(_objId)) {
+		alert("Object ID가 존재하지 않습니다.");
+		return "";
+	}
+	var format = "yy-mm-dd";
+	if(!jut.isEmpty(_format)) {
+		format = _format;
+	}
+	
+	$("#" + _objId).datepicker({
+		autoSize: true
+		, changeYear: true
+		, changeMonth  : true
+		, dateFormat : format
+		, maxDate : '2019-01-20'
+		, monthNamesShort  : [ "1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월" ]
+		, dayNamesMin: [ "일", "월", "화", "수", "목", "금", "토" ]
+	});
+};
 
 /**
  * Back Space의 기능을 차단한다. 
@@ -365,6 +390,11 @@ jcm.setDisableKeyDown = function() {
 	});
 }
 
+$(document).ready(function() {
+	console.log("################# JEIN COMMON START #################");
+	// 키보드로 백스페이스 기능을 차단한다. 
+	jcm.setDisableKeyDown();
+});
 
 
 

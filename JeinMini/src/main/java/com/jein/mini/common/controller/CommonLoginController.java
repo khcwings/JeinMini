@@ -3,6 +3,8 @@ package com.jein.mini.common.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jein.mini.biz.common.domain.CommonUser;
 import com.jein.mini.biz.common.persistence.CommonUserRepository;
 import com.jein.mini.constant.CommonConstant;
 import com.jein.mini.service.SecurityService;
@@ -55,15 +58,18 @@ public class CommonLoginController {
 	 */
 	@PostMapping("/data/loginProcess")
 	@ResponseBody
-	public Map<String, Object> executeLoginProcess(@RequestParam Map<String, Object> param) {
+	public Map<String, Object> executeLoginProcess(HttpSession session, @RequestParam Map<String, Object> param) {
 		LOG.info("###### Common Login Process : DATA START ######");
 		LOG.info(param.toString());
 		
+		String userId = DataUtil.getString(param, "userId");
 		Map<String, Object> retMap = new HashMap<String, Object>();
 		
 		// 1. 로그인 정보(ID, PWD)로 유저 정보 확인
-		if(userRepo.countByUserIdAndUserPwd(DataUtil.getString(param, "userId"), securityService.getSHA256(DataUtil.getString(param, "userPwd"))) > 0) {
+		if(userRepo.countByUserIdAndUserPwd(userId, securityService.getSHA256(DataUtil.getString(param, "userPwd"))) > 0) {
 			/* 세션 등록 로직 */
+			session.setAttribute("userInfo", userRepo.findOneByUserId(userId));
+			
 			
 			retMap.put("result", CommonConstant.RESULT_SUCCESS);
 			

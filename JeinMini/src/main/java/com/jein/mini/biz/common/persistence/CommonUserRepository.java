@@ -8,4 +8,5 @@ import com.jein.mini.biz.common.domain.CommonUser;
 @Repository
 public interface CommonUserRepository extends CrudRepository<CommonUser, Long>{
 	public long countByUserIdAndUserPwd(String userId, String userPwd);
+	public CommonUser findOneByUserId(String userId);
 }

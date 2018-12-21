@@ -79,3 +79,10 @@ a.btn-layerClose:hover {
 	background-color: #1f326a;
 	color: #fff;
 }
+
+.loadingImg {
+	position: absolute;
+	left: 45%;
+	top: 50%;
+	z-index: 120;
+}

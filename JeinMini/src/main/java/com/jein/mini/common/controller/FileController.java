@@ -1,4 +1,5 @@
-package com.jein.mini.sample.controller;
+package com.jein.mini.common.controller;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URLEncoder;
@@ -31,7 +32,7 @@ import com.jein.mini.util.FileManager;
 import com.jein.mini.util.KeyGenerator;
 
 @Controller
-@RequestMapping(value="/file/common")
+@RequestMapping(value="/common/file")
 public class FileController {
 	private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
 	
@@ -81,7 +82,12 @@ public class FileController {
      	} else {
      		result = tempFileResult;
      	}     	
-     	
+     	try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return result;
     }
 	
