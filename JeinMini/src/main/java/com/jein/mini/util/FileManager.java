@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -352,4 +354,28 @@ public class FileManager {
             return MediaType.APPLICATION_OCTET_STREAM;
         }
     }
+	
+	/**
+	 * Content Disposition 정보를 생성한다.
+	 * @param userAgent
+	 * @param fileName
+	 * @return
+	 */
+	public static String getContentDisposition(String userAgent, String fileName) {
+		String contentDisposition = "";	
+		try {
+			if(userAgent.indexOf("MSIE 5.5") > -1)	{
+				contentDisposition = "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
+			} else if(userAgent.indexOf("MSIE") > -1)	{
+				contentDisposition = "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
+			} else {
+				contentDisposition = "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "latin1").replaceAll("\\+", "\\ ") + ";";
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return contentDisposition;
+	}
 }

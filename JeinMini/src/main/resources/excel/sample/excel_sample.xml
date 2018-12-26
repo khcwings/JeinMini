@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+	<info>
+		<title>Jein Mini Menu List</title><!-- EXCEL SHEET TITLE -->
+		<filen_name>JeinMiniMenuList</filen_name><!-- DOWNLOAD EXCEL FILE NAME -->
+		<sheet_name>Menu List</sheet_name><!-- EXCEL SHEET  NAME -->
+		<font_size>30</font_size><!-- Title Font Size (Default : 11) -->
+		<background>5</background><!-- Back Ground Color : org.apache.poi.ss.usermodel.IndexedColors -->
+	</info>
+	<head>
+		<item>
+			<title>메뉴 아이디</title>
+			<width>30</width><!-- Cell Width : Header Only Setting(Default : 30) -->
+			<background>53</background><!-- Back Ground Color : org.apache.poi.ss.usermodel.IndexedColors -->
+			<font_size>15</font_size><!-- Header Font Size (Default : 11) -->
+		</item>	
+		<item>
+			<title>메뉴 유형</title>
+			<width>30</width>
+			<background>53</background>
+		</item>		
+		<item>
+			<title>메뉴명</title>
+			<width>100</width>
+			<background>53</background>
+		</item>		
+		<item>
+			<title>메뉴 URL</title>
+			<width>150</width>
+			<background>53</background>
+		</item>		
+		<item>
+			<title>파일 경로</title>
+			<width>150</width>
+			<background>53</background>
+		</item>		
+		<item>
+			<title>메뉴 LEVEL</title>
+			<width>30</width>
+			<background>53</background>
+		</item>		
+	</head>
+	<body>
+		<item>
+			<column>MENU_ID</column>
+			<font_size>15</font_size><!-- Body Font Size (Default : 11) -->
+		</item>	
+		<item>
+			<column>MENU_TYPE</column>
+		</item>	
+		<item>
+			<column>MENU_NAME</column>
+			<align>left</align>
+		</item>	
+		<item>
+			<column>MENU_URL</column>
+			<align>left</align>
+		</item>	
+		<item>
+			<column>MENU_PATH</column>
+			<align>left</align>
+		</item>	
+		<item>
+			<column>MENU_LEVEL</column>
+			<align>right</align>
+		</item>		
+	</body>
+</configuration>

@@ -1,5 +1,8 @@
 package com.jein.mini;
 
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ import com.jein.mini.biz.common.persistence.CommonMenuRepository;
 import com.jein.mini.biz.common.persistence.CommonUserRepository;
 import com.jein.mini.service.MailService;
 import com.jein.mini.service.SecurityService;
+import com.jein.mini.util.ParseUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,7 +40,25 @@ public class JeinMiniApplicationTests {
 
 	@Autowired
 	private MailService mailService;
+	
+	@Test
+	public void testExcelTemplate() {
+		System.out.println("##################################################### 1");
+		System.out.println(ParseUtil.parseXmlFileToMap("C:\\Users\\JEINSOFT\\git\\JeinMini\\JeinMini\\src\\main\\resources\\excel\\sample\\excel_sample.xml").toString());
+		try {
+			System.out.println("##################################################### 2");
+			Path path = Paths.get(getClass().getClassLoader().getResource("excel/sample/excel_sample.xml").toURI());
+			System.out.println(ParseUtil.parseXmlFileToMap(path).toString());
+			System.out.println("##################################################### 3");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
+	}
+/*
 	@Test
 	public void testCrypt() {
 
@@ -144,5 +166,5 @@ public class JeinMiniApplicationTests {
 		// 다수 Template Mail Text 첨부
 		mailService.sendTemplateMail("mail/mailSampleTemplate", receiver, "[다수]JEIN MINI TEST => TEMPLATE MAIL + FILE", model, attachFiles);
 		LOG.debug("##### TEST MAIL SEND END #####");
-	}
+	}*/
 }

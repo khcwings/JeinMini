@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jein.mini.biz.common.domain.CommonUser;
 import com.jein.mini.biz.common.persistence.CommonUserRepository;
 import com.jein.mini.constant.CommonConstant;
 import com.jein.mini.service.SecurityService;

@@ -1,0 +1,9 @@
+1. Excel
+	- xls 
+		Microsoft Excel 97-2003 버젼 사용되는 형식
+		최대 256컬럼, 65,536행 제한 
+		POI를 이용하여 데이터 접근 시 org.apache.poi.hssf 패키지 이용
+	- xlsx
+		Microsoft Excel 2007 이 후 버젼 사용되는 형식
+		최대 16,384컬럼, 1,048,567행 제한
+		POI를 이용하여 데이터 접근 시 org.apache.poi.xssf패키지 이용

@@ -38,7 +38,12 @@
   6. file.directory.{Job} : 업무별 저장 폴더
   
 # Excel Create
-
+  1. Template 파일을 만들어 엑셀 형식을 저장한다.
+  2. ExcelDataService.getExcelDataList 에 조회할 데이터 서비스를 추가한다. 
+  3. 미흡한점
+     - 템플릿 파일에 배경색 설정시 org.apache.poi.ss.usermodel.IndexedColors을 참조하여 Short Type의 컬러값을 세팅해야 한다.   
+     - 좀 더 다양한 유형의 엑셀 속성 사용 가능하도록 업그레이드 필요
+     
 # Excel Upload
 
 # 메일 발송

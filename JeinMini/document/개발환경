@@ -29,6 +29,7 @@
 	- WebJars-jquery-ui : 1.12.1
 	- WebJars-jqgrid : 4.7.0
 	- swagger2 : Rest API 확인
+	- POI : 3.17
 	
 # Eclipse Plug-In(Install New Sofeware)
 	- Thymeleaf : http://www.thymeleaf.org/eclipse-plugin-update-site
@@ -45,4 +46,4 @@
 	- Thymeleaf
 	  Spring Boot(1.5.18)에서 설정하는 Thymeleaf 설정은 Layout 설정이 되지 않는 등에 오류가 있음.
 	  이를 해결하기 위해 3.0.6버전으로 변경하는 설정 추가(pom.xml)
-	  
+z
