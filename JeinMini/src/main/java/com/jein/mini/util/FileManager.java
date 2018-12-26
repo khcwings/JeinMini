@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -23,9 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.io.Files;
+import com.jein.mini.constant.CommonMessageConstrant;
 import com.jein.mini.constant.FileConstant;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -78,7 +76,7 @@ public class FileManager {
 			LOG.debug("#[FileManager] System Max File Size : " + lMaxFileSize);
 
 			if(req == null) {
-				return createResultMsg(retMap, FileConstant.ERROR, "요청 정보가 존재하지 않습니다.");
+				return createResultMsg(retMap, FileConstant.ERROR, CommonMessageConstrant.ERROR_NO_REQ_DATA_MSG);
 			}
 
 			MultipartHttpServletRequest multipartRequest =  (MultipartHttpServletRequest)req;
@@ -92,7 +90,7 @@ public class FileManager {
 			LOG.debug("#[FileManager] File List Size : " + uploadFiles.size());
 
 			if(uploadFiles.size() < 1) {
-				return createResultMsg(retMap, FileConstant.ERROR, "업로드된 파일이 존재하지 않습니다.");
+				return createResultMsg(retMap, FileConstant.ERROR, CommonMessageConstrant.ERROR_FILE_NO_UPLOAD_MSG);
 			}
 			for (int i = 0; uploadFiles != null && i < uploadFiles.size(); i++){
 				MultipartFile mFile = uploadFiles.get(i);
@@ -106,12 +104,12 @@ public class FileManager {
 				LOG.debug("#[FileManager] Original File Name : " + originalFileName + ", File Type : " + fileType + ", File Size : " + fileSize);
 
 				if(strExtensionInfo.indexOf("|" + fileType.toUpperCase() + "|") < 0) {
-					return createResultMsg(retMap, FileConstant.ERROR, "[" + fileType.toUpperCase() + "] 파일은 저장할 수 없습니다.");
+					return createResultMsg(retMap, FileConstant.ERROR, "[" + fileType.toUpperCase() + "]" + CommonMessageConstrant.ERROR_FILE_NOT_SAVE_MSG);
 				}
 
 				// 파일의 사이즈가 지정된 사이즈를 넘는다면 파일을 저장하지 않는다. 
 				if(fileSize > lMaxFileSize) {
-					return createResultMsg(retMap, FileConstant.ERROR, "[" + originalFileName + "] 파일의 크기가 업로드 가능한 크기를 벗어났습니다.");
+					return createResultMsg(retMap, FileConstant.ERROR, "[" + originalFileName + "]" + CommonMessageConstrant.ERROR_FILE_MAX_SIZE_MSG);
 				}
 
 				if (originalFileName != null && !"".equals(originalFileName)){
@@ -128,16 +126,16 @@ public class FileManager {
 						LOG.debug("#[FileManager] File Save Info : " + fileInfo.toString());
 						fileList.add(fileInfo);
 					}else {
-						return createResultMsg(retMap, FileConstant.ERROR, "[" + originalFileName + "] 파일 저장 중 오류가 발생하였습니다.");
+						return createResultMsg(retMap, FileConstant.ERROR, "[" + originalFileName + "]" + CommonMessageConstrant.ERROR_FILE_SAVE_MSG);
 					}
 				}
 			}			
 		} catch(Exception e) {
 			LOG.error("#[FileManager] createTempFiles => " + e.getMessage());
-			return createResultMsg(retMap, FileConstant.ERROR, "임시 파일 저장 중 알 수 없는 오류가 발생하였습니다.");
+			return createResultMsg(retMap, FileConstant.ERROR, CommonMessageConstrant.ERROR_UNKNOWN_MSG);
 		}
 		retMap.put("fileList", fileList);
-		return createResultMsg(retMap, FileConstant.SUCCESS, "임시 파일 저장에 성공하였습니다.");
+		return createResultMsg(retMap, FileConstant.SUCCESS,  CommonMessageConstrant.SUCCESS_MSG);
 	}
 
 	/**
@@ -339,43 +337,5 @@ public class FileManager {
 	}
 	
 	
-	/**
-	 * 파일명에서 MediaType을 추출한다. 
-	 * @param servletContext
-	 * @param fileName
-	 * @return
-	 */
-	public static MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
-        String mineType = servletContext.getMimeType(fileName);
-        try {
-            MediaType mediaType = MediaType.parseMediaType(mineType);
-            return mediaType;
-        } catch (Exception e) {
-            return MediaType.APPLICATION_OCTET_STREAM;
-        }
-    }
 	
-	/**
-	 * Content Disposition 정보를 생성한다.
-	 * @param userAgent
-	 * @param fileName
-	 * @return
-	 */
-	public static String getContentDisposition(String userAgent, String fileName) {
-		String contentDisposition = "";	
-		try {
-			if(userAgent.indexOf("MSIE 5.5") > -1)	{
-				contentDisposition = "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
-			} else if(userAgent.indexOf("MSIE") > -1)	{
-				contentDisposition = "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
-			} else {
-				contentDisposition = "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "latin1").replaceAll("\\+", "\\ ") + ";";
-			}
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return contentDisposition;
-	}
 }

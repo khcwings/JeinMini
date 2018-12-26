@@ -1,6 +1,7 @@
 var jcm = {
 	contentPath     : '/mini'						// Content Root Path
 	, fileUploadUrl : '/common/file/fileUpload'     // File Upload Url
+	, excelReadUrl  : '/common/file/readExcelFile'  // File Upload Url
 	, winPopupdUrl  : '/common/popup/windowPopup01' // Window Open Url
 	, ajaxCallCount : 0
 	, constant : {
@@ -26,6 +27,52 @@ jcm.doAjaxFileForm = function(formId, _callbackFunc) {
 	$.ajax({
 		type : 'post',
 		url  : jcm.contentPath + jcm.fileUploadUrl,
+		data : formData,
+		processData : false,
+		contentType : false,
+		success : function(res) {								// HTTP 성공
+			// 로딩바 종료
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}
+			
+			if(jcm.constant.result_success == res.resultCode) {		// 응답코드가 성공인 경우
+				if(jut.isObj(_callbackFunc)) {
+					_callbackFunc(res);
+				}
+			} else {												// 응답코드가 실패인 경우
+				alert(res.resultMsg);
+			}
+		},
+		error : function(error) {								// HTTP 실패
+			// 로딩바 종료
+			jcm.ajaxCallCount--;
+			if(jcm.ajaxCallCount == 0) {
+				jcm.hideLoadingBar();
+			}			
+			alert("파일 업로드에 실패하였습니다.");
+		}
+	});
+};
+
+//AJAX를 이용하여 엑셀 파일 읽기
+jcm.doAjaxExcelForm = function(formId, _url, _callbackFunc) {
+	// 파일 저장 폼 정보
+	var formData = new FormData($("#" + formId)[0]);
+	// 로딩바 노출
+	if(jcm.ajaxCallCount == 0) {
+		jcm.showLoadingBar();
+	}
+	jcm.ajaxCallCount++;
+	
+	var url = jcm.contentPath + jcm.excelReadUrl;
+	if(!jut.isEmpty(_url)) {
+		url = jcm.contentPath + _url;
+	}
+	$.ajax({
+		type : 'post',
+		url  : url,
 		data : formData,
 		processData : false,
 		contentType : false,

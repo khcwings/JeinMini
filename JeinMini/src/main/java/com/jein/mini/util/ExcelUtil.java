@@ -1,11 +1,21 @@
 package com.jein.mini.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -14,11 +24,90 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import org.apache.poi.ss.usermodel.Row;
 
 import com.jein.mini.constant.ExcelConstant;
 
 public class ExcelUtil {
-	
+	private static final Logger LOG = LoggerFactory.getLogger(ExcelUtil.class);
+
+	/**
+	 * 엑셀 파일을 읽어 데이터를 생성한다. 
+	 * @param fileList
+	 * @param bodyInfoList
+	 * @param fileTempDirectory
+	 * @return
+	 */
+	@SuppressWarnings("resource")
+	public static List<Map<String, Object>> readExcel(List<Map<String, Object>> fileList, List<Map<String, Object>> bodyInfoList, String fileTempDirectory) {
+		// Data Start Row Count
+		int iStartRow = 3;
+		
+		List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+		if(fileList != null && !fileList.isEmpty() && bodyInfoList != null && !bodyInfoList.isEmpty()) {
+			try {
+				File file 		= new File(fileTempDirectory + DataUtil.getString(fileList.get(0), "changeFileName"));
+				String fileName = file.getName();
+				String extName 	= (fileName.lastIndexOf(".") != -1) ? fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase(): "___"; 
+				Iterator<Row> rowInterator = null;
+				if("xlsx".equalsIgnoreCase(extName)) {
+					XSSFWorkbook workBook = new XSSFWorkbook(file);
+					XSSFSheet 	 sheet = workBook.getSheetAt(0);
+
+					rowInterator = sheet.iterator();
+				} else {
+					HSSFWorkbook workBook = new HSSFWorkbook(new FileInputStream(file));
+					HSSFSheet 	 sheet = workBook.getSheetAt(0);
+
+					rowInterator = sheet.iterator();
+				}
+				
+				int iRowCnt = 0;
+				while(rowInterator.hasNext()) {			
+					Row row = rowInterator.next();
+					iRowCnt++;
+					if(iRowCnt < iStartRow) { 
+						continue;
+					}
+					
+					Iterator<Cell> cellIterator = row.cellIterator();
+					Map<String, Object> item = new HashMap<String, Object>();
+					while(cellIterator.hasNext()) {
+						Cell cell 	= cellIterator.next();
+						int iColIdx = cell.getColumnIndex();
+						//LOG.debug("iColIdx : " + iColIdx + ", CellType : " + cell.getCellTypeEnum());
+						if(iColIdx > 0) {
+							if(cell.getCellTypeEnum() == CellType.STRING) {
+								item.put(DataUtil.getString(bodyInfoList.get(iColIdx - 1), "column"), cell.getStringCellValue());
+							} else if(cell.getCellTypeEnum() == CellType.NUMERIC) {
+								item.put(DataUtil.getString(bodyInfoList.get(iColIdx - 1), "column"), cell.getNumericCellValue());
+							} else {
+								item.put(DataUtil.getString(bodyInfoList.get(iColIdx - 1), "column"), cell.getStringCellValue());
+							}
+						}
+					}
+					retList.add(item);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				LOG.error("#####[ExcelUtil-readExcel] IOException => " + e.getMessage());
+			} catch (InvalidFormatException e) {
+				e.printStackTrace();
+				LOG.error("#####[ExcelUtil-readExcel] InvalidFormatException => " + e.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+				LOG.error("#####[ExcelUtil-readExcel] Exception => " + e.getMessage());
+			}
+		}
+		
+		LOG.debug("retList : " + retList.toString());
+		return retList;
+	}
+
 	/**
 	 * Excel을 생성한다. 
 	 * @param infoMap
@@ -65,10 +154,10 @@ public class ExcelUtil {
 				iHeadCellCnt++;
 			}
 		}
-		
-		
+
+
 		// Data 생성
-		if(bodyDataList != null && !bodyDataList.isEmpty()) {
+		if(bodyInfoList != null && !bodyInfoList.isEmpty() && bodyDataList != null && !bodyDataList.isEmpty()) {
 			int bodyCnt = 3;
 			for(Map<String, Object> bodyData : bodyDataList) {
 				XSSFRow bodyRow = sheet.createRow(bodyCnt);
@@ -118,7 +207,7 @@ public class ExcelUtil {
 		CellStyle style = createDefaultCellStyle(workbook);
 		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);			
 		style.setFillForegroundColor((short)5);
-		
+
 		// Cell 생성
 		Cell headCell = headRow.createCell(0);		
 		headCell.setCellValue(ExcelConstant.EXCEL_HEADER_TITLE_NO);
@@ -158,22 +247,22 @@ public class ExcelUtil {
 				cellStyle.setAlignment(HorizontalAlignment.RIGHT);
 			}
 		}
-		
+
 		// Back Ground Color
 		String background = DataUtil.getString(styleInfo, ExcelConstant.EXCEL_TEMPLATE_CELL_BACKGROUND_COLOR);
 		if(!background.isEmpty()) {			
 			// 단색 채우기 설정
 			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);	
-			
+
 			cellStyle.setFillForegroundColor(Short.parseShort(background)); 
 		}
-		
+
 		// Font
 		int fontSize = DataUtil.getInteger(DataUtil.getString(styleInfo, ExcelConstant.EXCEL_TEMPLATE_CELL_FONT_SIZE), ExcelConstant.EXCEL_TEMPLATE_CELL_FONT_SIZE_DEFAULT);
 		XSSFFont font = workbook.createFont();
 		font.setFontHeightInPoints((short)fontSize);
 		cellStyle.setFont(font);
-		
+
 		return cellStyle;
 	}
 

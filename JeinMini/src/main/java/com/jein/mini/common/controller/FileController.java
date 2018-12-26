@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jein.mini.biz.common.domain.CommonFile;
 import com.jein.mini.biz.common.persistence.CommonFileRepository;
+import com.jein.mini.constant.CommonMessageConstrant;
 import com.jein.mini.constant.ExcelConstant;
 import com.jein.mini.constant.FileConstant;
 import com.jein.mini.service.ExcelDataService;
@@ -43,7 +45,7 @@ import com.jein.mini.util.ParseUtil;
 
 @Controller
 @RequestMapping(value="/common/file")
-public class FileController {
+public class FileController extends AbstractController {
 	private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
 
 	@Autowired
@@ -51,7 +53,7 @@ public class FileController {
 
 	@Autowired
 	private ServletContext servletContext;
-	
+
 	@Autowired
 	private ExcelDataService excelDataService;
 
@@ -60,7 +62,7 @@ public class FileController {
 
 	@Value("${file.excel.template.root}")
 	private String excelRootPath;
-		
+
 	@Value("${file.excel.temp.file.name}")
 	private String excelTempFileName;
 
@@ -103,12 +105,6 @@ public class FileController {
 			}
 		} else {
 			result = tempFileResult;
-		}     	
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return result;
 	}
@@ -148,8 +144,8 @@ public class FileController {
 
 			// 5. Http Response를 설정한다. 
 			result = ResponseEntity.ok()
-					.header(HttpHeaders.CONTENT_DISPOSITION, FileManager.getContentDisposition(request.getHeader("User-Agent"), fileName))
-					.contentType(FileManager.getMediaTypeForFileName(this.servletContext, fileName))
+					.header(HttpHeaders.CONTENT_DISPOSITION, DataUtil.getContentDisposition(request.getHeader("User-Agent"), fileName))
+					.contentType(DataUtil.getMediaTypeForFileName(this.servletContext, fileName))
 					.contentLength(file.length())
 					.body(resource);
 		} catch (Exception e) {
@@ -202,7 +198,7 @@ public class FileController {
 			LOG.debug("#####[FileController-downloadExcel] MAP Info => " + excelInfo.toString());
 			LOG.debug("#####[FileController-downloadExcel] LIST HEAD => " + excelHead.toString());
 			LOG.debug("#####[FileController-downloadExcel] LIST Body => " + excelBody.toString());
-			
+
 			String downloadFileName = DataUtil.getString(excelInfo, "filen_name") + "_" + DateTimeUtil.getCurrentDateTimeSSS() + "." + ExcelConstant.EXCEL_DOWNLOAD_FILE_EXTENSION;
 
 			// 5. 데이터를 조회한다. 
@@ -236,13 +232,74 @@ public class FileController {
 
 			// 9. Http Response를 설정한다. 
 			result = ResponseEntity.ok()
-					.header(HttpHeaders.CONTENT_DISPOSITION, FileManager.getContentDisposition(request.getHeader("User-Agent"), downloadFileName))
-					.contentType(FileManager.getMediaTypeForFileName(this.servletContext, downloadFileName))
+					.header(HttpHeaders.CONTENT_DISPOSITION, DataUtil.getContentDisposition(request.getHeader("User-Agent"), downloadFileName))
+					.contentType(DataUtil.getMediaTypeForFileName(this.servletContext, downloadFileName))
 					.contentLength(file.length())
 					.body(resource);
 		} catch (Exception e) {
 			LOG.error("#####[FileController-downloadFile]" + e.getMessage());
 		}	
+
+		return result;
+	}
+
+	@PostMapping("/readExcelFile")
+	@ResponseBody
+	public Map<String, Object> readExcelFile(HttpServletRequest request) {
+		LOG.debug("##### Read Excel File #####");
+
+		// 최종 결과 데이터
+		Map<String, Object> result 			= new HashMap<String, Object>();
+		// 임시 저장 결과 데이터
+		Map<String, Object> tempFileResult	= null;
+
+		try {
+			// 1. 템플릿 파일의 경로를 가져온다.
+			String filePath         = DataUtil.getString(request, "excelTemplate");			
+			LOG.debug("#####[FileController-readExcelFile] TEMPLATE FILE PATH   => " + filePath);
+			LOG.debug("#####[FileController-readExcelFile] EXCEL ROOT FILE PATH => " + excelRootPath);
+
+			// 2. 템플릿 파일의 ROOT 경로를 설정한다. 
+			Path templatePath = null;
+			if(excelRootPath.indexOf("classpath:") == 0) {
+				templatePath = Paths.get(getClass().getClassLoader().getResource(excelRootPath.replace("classpath:", "") + filePath).toURI());
+			} else {
+				templatePath = Paths.get(excelRootPath + filePath);
+			}
+			LOG.debug("#####[FileController-readExcelFile] TEMPLATE PATH => " + templatePath);
+
+			// 3. XML FILE 을 Map으로 변경한다. 
+			Map<String, Object> xmlMap = ParseUtil.parseXmlFileToMap(templatePath);
+			LOG.debug("#####[FileController-readExcelFile] XML TO MAP => " + xmlMap.toString());
+			if(xmlMap == null || xmlMap.isEmpty()) {
+				LOG.error("#####[FileController-readExcelFile]Excel Template File is null");
+				return result;
+			}
+
+			// 4. EXCEL FILE 생성 정보를 읽어온다. 
+			List<Map<String, Object>> excelBody = DataUtil.getList(DataUtil.getMap(DataUtil.getMap(xmlMap, "configuration"), "body"), "item");
+			LOG.debug("#####[FileController-readExcelFile] LIST Body => " + excelBody.toString());
+
+			// 5. 파일을 임시 저장한다. 
+			tempFileResult = FileManager.getInstance().createTempFiles(request, "EXCEL");     	
+			LOG.debug("#####[FileController-readExcelFile] FILE INFO => " + tempFileResult.toString());
+
+			// 6. 임시 저장이 성공일 경우 엑셀 파일을 분석한다. 
+			if(FileConstant.SUCCESS.equals(DataUtil.getString(tempFileResult, "resultCode"))) {
+				createResultMsg(result, FileConstant.SUCCESS, CommonMessageConstrant.SUCCESS_MSG);
+				result.put("excelDataList", ExcelUtil.readExcel(DataUtil.getList(tempFileResult, "fileList"), excelBody, fileTempDirectory));
+			} else {
+				createResultMsg(result, FileConstant.ERROR, CommonMessageConstrant.ERROR_MSG);
+			}   
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			LOG.debug("#####[FileController-readExcelFile] URISyntaxException => " + e.getMessage());
+			createResultMsg(result, FileConstant.ERROR, CommonMessageConstrant.ERROR_UNKNOWN_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.debug("#####[FileController-readExcelFile] Exception => " + e.getMessage());
+			createResultMsg(result, FileConstant.ERROR, CommonMessageConstrant.ERROR_UNKNOWN_MSG);
+		}
 
 		return result;
 	}

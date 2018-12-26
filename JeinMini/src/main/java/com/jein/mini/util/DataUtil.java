@@ -1,17 +1,21 @@
 package com.jein.mini.util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.core.env.PropertySource;
+import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,6 +26,52 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jein.mini.constant.CommonConstant;
 
 public class DataUtil {
+	
+	/**
+	 * 파일명에서 MediaType을 추출한다. 
+	 * @author 김희철
+	 * @since  2018-12-26
+	 * @param servletContext
+	 * @param fileName
+	 * @return
+	 */
+	public static MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
+        String mineType = servletContext.getMimeType(fileName);
+        try {
+            MediaType mediaType = MediaType.parseMediaType(mineType);
+            return mediaType;
+        } catch (Exception e) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+    }
+	
+	/**
+	 * Content Disposition 정보를 생성한다.
+	 * @author 김희철
+	 * @since  2018-12-26
+	 * @param userAgent
+	 * @param fileName
+	 * @return
+	 */
+	public static String getContentDisposition(String userAgent, String fileName) {
+		String contentDisposition = "";	
+		try {
+			if(userAgent.indexOf("MSIE 5.5") > -1)	{
+				contentDisposition = "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
+			} else if(userAgent.indexOf("MSIE") > -1)	{
+				contentDisposition = "attachment; filename=" + java.net.URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "\\ ") + ";";
+			} else {
+				contentDisposition = "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "latin1").replaceAll("\\+", "\\ ") + ";";
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return contentDisposition;
+	}
+	
+	
 	
 	@SuppressWarnings({ "unchecked", "serial" })
 	public static final List<Map<String, Object>> getList(Map<String, Object> param, String key) {
