@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8" />
+<link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.png}">
+<link rel="icon"          type="image/x-icon" th:href="@{/images/favicon.png}">
+<link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.css}" />
+<link rel="stylesheet" th:href="@{/webjars/jqgrid/4.7.0/css/ui.jqgrid.css}" />
+<link rel="stylesheet" th:href="@{/css/common.css}" />
+<link rel="stylesheet" th:href="@{/css/sample/base.css}" />
+<link rel="stylesheet" th:href="@{/css/sample/common.css}" />
+<link rel="stylesheet" th:href="@{/css/sample/hd.css}" />
+<script type="text/javascript" th:src="@{/webjars/jquery/3.3.1/dist/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jqgrid/4.7.0/js/i18n/grid.locale-kr.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jqgrid/4.7.0/js/jquery.jqGrid.js}"></script>
+<script type="text/javascript" th:src="@{/js/common/jein_common.js}"></script>
+<script type="text/javascript" th:src="@{/js/common/jein_util.js}"></script>
+</head>
+<body>
+	<div class="wrap">
+		<!-- header -->
+		<div class="header">
+			<div class="logo">
+				<a href="#">Jein Soft</a>
+			</div>
+			<div class="quickmenu">
+				<ul>
+					<li th:each="menu,index : ${session.menuList}" th:if="${menu.MENU_LEVEL}==1"><a href="javascript:;" onclick="javascript:goQuickMenu('order');"><em th:class="${'qm' + ((index.count%3)+1)}"></em><span th:text="${menu.MENU_NAME}"></span></a></li>
+				</ul>
+			</div>
+			<div class="userinfo">
+				<ul>
+					<li class="userid"><span>Welcome!</span> <span th:text="${session.userInfo.userName}"></span>님</li>
+					<li class="logout"><div class="btn type3">
+							<a href="#;"><span>Logout</span></a>
+						</div></li>
+					<li class="setup"><a href="#" title="User Info Set-up">User Info Set-up</a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- /header -->
+
+		<!-- container -->
+		<div class="container">
+			<!-- leftmenu view -->
+			<div class="leftmenu">
+				<div class="fold_menu">
+					<a href="#" title="Fold Leftmenu">Fold Leftmenu</a>
+				</div>
+				<div class="inner">
+					<div class="lnb">
+						<ul>
+							<li class="menu1 on"><a href="#;"><span>Order Order OrderOrder Order</span></a>
+								<ul>
+									<li class="on"><a href="#;"><span>Purchase OrderPurchase Order</span></a>
+										<ul>
+											<li><a href="#;">Place Order</a></li>
+											<li class="on"><a href="#;">Product Information</a></li>
+											<li><a href="#;">Cart</a></li>
+											<li><a href="#;">PL List</a></li>
+										</ul></li>
+									<li><a href="#;"><span>Sub Menu2</span></a></li>
+									<li><a href="#;"><span>Sub Menu3</span></a></li>
+								</ul></li>
+							<li class="menu2"><a href="#;"><span>Delivery</span></a></li>
+							<li class="menu3">
+								<ul>
+									<li class="on">
+										<ul>
+											<li><a href="#;">Place Order</a></li>
+											<li class="on"><a href="#;">Product Information</a></li>
+											<li><a href="#;">Cart</a></li>
+											<li><a href="#;">PL List</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class="menu4"><a href="#;"><span>Admin</span></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /leftmenu view -->
+
+			<!-- leftmenu hide -->
+			<div class="leftmenu" style="display: none; left: -210px;">
+				<div class="fold_menu view_menu">
+					<a href="#;" title="Unfold Leftmenu">Unfold Leftmenu</a>
+				</div>
+				<div class="inner">
+					<div class="lnb"></div>
+				</div>
+			</div>
+			<!-- /leftmenu hide -->
+
+			<!-- contents -->
+			<div class="contents">
+				<div class="cnts_wrap">
+
+					<!-- location -->
+					<div class="location">
+						<ul class="loc_title">
+							<li><a href="#">Menu1</a></li>
+							<li><a href="#">Sub Menu1</a></li>
+							<li>Last Menu</li>
+						</ul>
+					</div>
+					<!-- /location -->
+
+					<!-- page title -->
+					<div class="page_title">
+						<h2>Menu vs User Group</h2>
+					</div>
+					<!-- page title -->
+
+					<!-- article -->
+					<article>
+						<section layout:fragment="content">
+							<p>Page content goes here</p>
+						</section>
+					</article>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

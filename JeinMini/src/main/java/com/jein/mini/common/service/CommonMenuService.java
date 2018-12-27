@@ -16,10 +16,10 @@ public class CommonMenuService {
 	@Autowired
 	private CommonMenuMapper commonMenuMapper;
 	
-	public List<Map<String, Object>> getMenuList() {
+	public List<Map<String, Object>> getMenuList(Map<String, Object> params) {
 		List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
 		try {
-			retList = commonMenuMapper.selectMenuList();
+			retList = commonMenuMapper.selectMenuList(params);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

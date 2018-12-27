@@ -18,13 +18,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jein.mini.biz.common.persistence.CommonUserRepository;
+import com.jein.mini.common.service.CommonMenuService;
 import com.jein.mini.constant.CommonConstant;
+import com.jein.mini.constant.SessionConstant;
 import com.jein.mini.service.SecurityService;
 import com.jein.mini.util.DataUtil;
 
 @Controller
 @RequestMapping(value="/common")
-public class CommonLoginController {
+public class CommonLoginController extends AbstractController {
 	private static final Logger LOG = LoggerFactory.getLogger(CommonLoginController.class);
 	
 	@Autowired
@@ -32,6 +34,9 @@ public class CommonLoginController {
 	
 	@Autowired
 	private CommonUserRepository userRepo;
+	
+	@Autowired
+	private CommonMenuService commonMenuService;
 	
 	@Value("${server.context-path}")
 	private String contentPath;
@@ -57,18 +62,23 @@ public class CommonLoginController {
 	 */
 	@PostMapping("/data/loginProcess")
 	@ResponseBody
-	public Map<String, Object> executeLoginProcess(HttpSession session, @RequestParam Map<String, Object> param) {
+	public Map<String, Object> executeLoginProcess(HttpSession session, @RequestParam Map<String, Object> params) {
 		LOG.info("###### Common Login Process : DATA START ######");
-		LOG.info(param.toString());
+		LOG.info(params.toString());
 		
-		String userId = DataUtil.getString(param, "userId");
+		// Param 정보에 User Id 추가
+		setSessionToParam(session, params); 
+		
+		String userId = DataUtil.getString(params, "userId");
 		Map<String, Object> retMap = new HashMap<String, Object>();
 		
 		// 1. 로그인 정보(ID, PWD)로 유저 정보 확인
-		if(userRepo.countByUserIdAndUserPwd(userId, securityService.getSHA256(DataUtil.getString(param, "userPwd"))) > 0) {
-			/* 세션 등록 로직 */
-			session.setAttribute("userInfo", userRepo.findOneByUserId(userId));
+		if(userRepo.countByUserIdAndUserPwd(userId, securityService.getSHA256(DataUtil.getString(params, "userPwd"))) > 0) {
+			/* 세션에 유저 정보 등록 */
+			session.setAttribute(SessionConstant.SESSION_USER_INFO_KEY, userRepo.findOneByUserId(userId));
 			
+			/* 세션에 메뉴 정보 등록 */
+			session.setAttribute(SessionConstant.SESSION_MENU_LIST_KEY, commonMenuService.getMenuList(params));
 			
 			retMap.put("result", CommonConstant.RESULT_SUCCESS);
 			

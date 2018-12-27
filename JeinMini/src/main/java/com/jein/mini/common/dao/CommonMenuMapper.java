@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface CommonMenuMapper {
-	public List<Map<String, Object>> selectMenuList();
+	public List<Map<String, Object>> selectMenuList(Map<String, Object> params);
 }

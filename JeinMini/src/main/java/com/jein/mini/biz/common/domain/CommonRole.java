@@ -20,10 +20,11 @@ import lombok.ToString;
 @Table(name="cm_role")
 public class CommonRole {
 	@Id
-	private String roleId;
+	private String 	roleId;				// ROLE ID
 	
-	private String roleName;
-	private String roleDesc;
+	private String 	roleName;			// ROLE에 대한 간단 설명
+	private String 	roleDesc;			// ROLE에 대한 상세 설명
+	private char	useYn = 'N';		// 사용 여부
 	
 	private String createId;
 	@CreationTimestamp

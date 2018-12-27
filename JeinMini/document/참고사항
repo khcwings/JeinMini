@@ -7,3 +7,7 @@
 		Microsoft Excel 2007 이 후 버젼 사용되는 형식
 		최대 16,384컬럼, 1,048,567행 제한
 		POI를 이용하여 데이터 접근 시 org.apache.poi.xssf패키지 이용
+
+# ECLIPSE SETTING
+	1. 자동 정렬 넓이값 변경(HTML)
+		Window - Preperences - Web - HTML Files - Editor 의  Line Width 수정

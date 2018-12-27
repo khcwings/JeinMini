@@ -2,8 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.jein.mini.common.dao.CommonMenuMapper">
-	<select id="selectMenuList" resultType="Map">
-		SELECT MENU_ID, MENU_TYPE, MENU_NAME, MENU_URL, MENU_PATH, MENU_LEVEL 
-		FROM CM_MENU
+	<select id="selectMenuList" parameterType="Map" resultType="Map">
+		SELECT  CM.MENU_ID, CM.MENU_NAME, CM.MENU_LEVEL, CM.DISPLAY_ORDER, RU.START_DT
+		FROM 	CM_USER CU
+				, CM_ROLE_USER RU
+		        , CM_ROLE CR 
+		        , CM_ROLE_MENU RM
+		        , CM_MENU CM 
+		WHERE	CU.USER_ID 		= RU.USER_ID
+				AND RU.ROLE_ID 	= CR.ROLE_ID
+		        AND CR.ROLE_ID	= RM.ROLE_ID
+		        AND RM.MENU_ID	= CM.MENU_ID
+		        AND CU.DELETE_YN= 'N'
+		        AND CR.USE_YN   = 'N'
+		        AND CM.MENU_TYPE= 'VIEW'
+		        AND CU.USER_ID	= #{userId}
+		        AND DATE_FORMAT(NOW(), '%Y%m%d') BETWEEN RU.START_DT AND RU.END_DT
+		ORDER BY CM.MENU_LEVEL ASC, CM.DISPLAY_ORDER ASC, CM.MENU_ID ASC
 	</select>
 </mapper>

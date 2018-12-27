@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value="/common")
-public class CommonController {
+public class CommonController extends AbstractController {
 	private static final Logger LOG = LoggerFactory.getLogger(CommonController.class);
 	
 	@RequestMapping(value = {"/popup/windowPopup01"},  method = {RequestMethod.GET, RequestMethod.POST})

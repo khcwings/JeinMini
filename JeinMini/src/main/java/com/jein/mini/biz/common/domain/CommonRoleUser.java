@@ -24,6 +24,9 @@ public class CommonRoleUser {
 	@EmbeddedId
 	private RoleUserPk id;
 	
+	private String startDt;		// 권한 시작 날짜
+	private String endDt;		// 권한 종료 날짜
+	
 	private String createId;
 	@CreationTimestamp
 	private Timestamp createDt;
@@ -36,7 +39,7 @@ public class CommonRoleUser {
 	@Setter
 	@ToString
 	@Embeddable
-	private static class RoleUserPk implements Serializable {
+	public static class RoleUserPk implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private String roleId;

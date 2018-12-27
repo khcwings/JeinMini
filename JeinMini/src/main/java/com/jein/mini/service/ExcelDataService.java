@@ -15,13 +15,13 @@ public class ExcelDataService {
 	@Autowired
 	private CommonMenuService commonMenuService;
 	
-	public List<Map<String, Object>> getExcelDataList(Map<String, Object> param) {
+	public List<Map<String, Object>> getExcelDataList(Map<String, Object> params) {
 		List<Map<String, Object>> retList = null;
 		
-		String excelDataCode = DataUtil.getString(param, ExcelConstant.EXCEL_DATA_CODE);
+		String excelDataCode = DataUtil.getString(params, ExcelConstant.EXCEL_DATA_CODE);
 		switch (excelDataCode) {
 		case "CM0001":
-			retList = commonMenuService.getMenuList();
+			retList = commonMenuService.getMenuList(params);
 			break;
 
 		default:

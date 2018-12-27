@@ -80,17 +80,16 @@
   4. LogBack 설정
      resources/logback/logback-config-{Profile}.properties
 
+# 오류 페이지 사용자 정의
+  1. application-{Profile}.properties 에서 Whitelabel 오류 페이지 비활성화
+  	 server.error.whitelabel.enabled=false
+  2. resources/properties/common.properties에 오류 페이지 소스 위치 설정
+     404, 500, DEFAULT
+  3. com.jein.mini.common.controller.CustomErrorController 에서 추가 기능 개발 가능
+  
 # Design 확인하기 
   1. resources/templete/design/{파일명} 디자인 파일 생성 및 개발
   2. http://localhost:8080/mini/sample/design/{파일명} 호출로 확인
-  
- # 개발 완료 URL
-   - 로그인
-     http://localhost:8080/mini/common/login  jeinsoft/jein0915!
-   - Sample
-     http://localhost:8080/mini/sample/view/sample{01-03}
-   - Design
-     http://localhost:8080/mini/sample/design/{파일명}
     
  # Script 기능
    - AJAX
@@ -113,4 +112,13 @@
    - 달력
      1. jquery-ui를 이용하여 생성 - (완료)
      2. 세팅 관련 Function 만들기- (완료)
+     
+    
+ # 개발 완료 URL
+   - 로그인
+     http://localhost:8080/mini/common/login  jeinsoft/jein0915!
+   - Sample
+     http://localhost:8080/mini/sample/view/sample{01-03}
+   - Design
+     http://localhost:8080/mini/sample/design/{파일명}
      
