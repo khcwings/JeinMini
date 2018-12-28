@@ -24,6 +24,11 @@ public class CommonRoleMenu {
 	@EmbeddedId
 	private RoleMenuPk id;
 	
+	private char createYn = 'N';		// 생성 권한
+	private char updateYn = 'N';		// 수정 권한
+	private char deleteYn = 'N';		// 삭제 권한
+	private char readYn   = 'Y';		// 읽기 권한
+		
 	private String createId;
 	@CreationTimestamp
 	private Timestamp createDt;

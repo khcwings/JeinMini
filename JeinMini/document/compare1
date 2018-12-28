@@ -1,0 +1,30 @@
+<li class="menu1">
+	<a href="#;"><span>Admin</span></a>
+	<ul>							
+		<li>
+			<a href="#;"><span>메뉴</span></a>
+			<ul>
+				<li>
+					<a href="#;">메뉴관리</a>
+				</li>	
+			</ul>
+		</li>
+		<li>
+			<a href="#;"><span>유저</span></a>
+			<ul>
+				<li>
+					<a href="#;"><span>유저관리</span></a>
+				</li>
+			</ul>
+		</li>
+		
+		<li>
+			<a href="#;"><span>권한</span></a>
+			<ul>
+				<li>
+					<a href="#;"><span>권한관리</span></a>
+				</li>											
+			</ul>
+		</li>
+	</ul>
+</li>

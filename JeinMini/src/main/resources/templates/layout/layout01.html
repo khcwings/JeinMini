@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.png}">
-<link rel="icon"          type="image/x-icon" th:href="@{/images/favicon.png}">
+<link rel="icon" type="image/x-icon" th:href="@{/images/favicon.png}">
 <link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.css}" />
 <link rel="stylesheet" th:href="@{/webjars/jqgrid/4.7.0/css/ui.jqgrid.css}" />
 <link rel="stylesheet" th:href="@{/css/common.css}" />
@@ -16,17 +16,89 @@
 <script type="text/javascript" th:src="@{/webjars/jqgrid/4.7.0/js/jquery.jqGrid.js}"></script>
 <script type="text/javascript" th:src="@{/js/common/jein_common.js}"></script>
 <script type="text/javascript" th:src="@{/js/common/jein_util.js}"></script>
+<script type="text/javascript">
+	var layout = {};
+	
+	// 최상위 메뉴 클릭
+	layout.clickTopMenu = function(menuId) {
+		var childId = $("[name=" + menuId + "]").find("li").eq(0).attr("id");
+		if (!jut.isEmpty(childId)) {
+			if($("#" + childId + " ul").find("li").length > 0) {
+				layout.clickTopMenu(childId);
+			} else {
+				$("#" + childId + " a").eq(0).trigger('click');
+			}
+		}
+	};
+	
+	// Left 메뉴 클릭
+	layout.clickMenu = function(menuId, menuUrl) {
+		if (!jut.isEmpty(menuUrl)) {
+			layout.goPageChange(menuUrl);
+		}
+		if ($("[name=" + menuId + "]").css("display") == "none"
+				&& $("#" + menuId + " ul").find("li").length > 0) {
+			$("[name=" + menuId + "]").show();
+		} else {
+			$("[name=" + menuId + "]").hide();
+		}
+	};
+
+	// 페이지 로드 후 Left 메뉴 트리 활성화
+	layout.addClassLeftMenuPath = function(menuId) {
+		if (!jut.isEmpty(menuId)) {
+			if ($("#" + menuId).length > 0) {
+				// 해당 메뉴 활성화
+				$("#" + menuId).addClass("on");
+				$("[name=" + menuId + "]").show();
+				
+				// 상위 메뉴 활성화 요청
+				if (!jut.isEmpty($("#" + menuId).attr("upper"))) {
+					layout.addClassLeftMenuPath($("#" + menuId).attr("upper"));
+				}
+			} else {
+				// View 메뉴에 해당 페이지가 존재하지 않음으로 Left 메뉴 제거 
+				$(".leftmenu").hide();
+				$(".contents").css("left", 0);
+			}
+		}
+	};
+	
+	// Left 메뉴 접기/펼치기
+	layout.showLeftMenu = function(opt){
+		if (opt){
+			$("#divFoldLeftMenuOff").hide();
+			$("#divFoldLeftMenuOn").show();
+			$(".contents").css("left",240);
+		} else {
+			$("#divFoldLeftMenuOn").hide();
+			$("#divFoldLeftMenuOff").show();
+			$(".contents").css("left",10);
+		}
+	};
+	
+	// 페이지 이동
+	layout.goPageChange = function(menuUrl) {
+		location.href = jcm.contentPath + menuUrl;
+	};
+
+	$(document).ready(function() {
+		// 페이지 메뉴 아이디를 이용환 Left 메뉴 Controll
+		layout.addClassLeftMenuPath("[[${viewMenuId}]]");
+	});
+</script>
 </head>
 <body>
 	<div class="wrap">
 		<!-- header -->
 		<div class="header">
 			<div class="logo">
-				<a href="#">Jein Soft</a>
+				<a href="javascript:void(0);" onclick="javascript:layout.goPageChange('/common/view/main');">Jein Soft</a>
 			</div>
 			<div class="quickmenu">
 				<ul>
-					<li th:each="menu,index : ${session.menuList}" th:if="${menu.MENU_LEVEL}==1"><a href="javascript:;" onclick="javascript:goQuickMenu('order');"><em th:class="${'qm' + ((index.count%3)+1)}"></em><span th:text="${menu.MENU_NAME}"></span></a></li>
+					<li th:each="menu,index : ${session.menuList}" th:if="${menu.MENU_LEVEL}==1"><a href="javascript:void(0);" th:onclick="'javascript:layout.clickTopMenu(\'' + ${menu.MENU_ID} + '\');'"><em
+							th:class="${'qm' + ((index.count%3)+1)}"></em><span th:text="${menu.MENU_NAME}"></span></a></li>
 				</ul>
 			</div>
 			<div class="userinfo">
@@ -44,39 +116,26 @@
 		<!-- container -->
 		<div class="container">
 			<!-- leftmenu view -->
-			<div class="leftmenu">
+			<div class="leftmenu" id="divFoldLeftMenuOn">
 				<div class="fold_menu">
-					<a href="#" title="Fold Leftmenu">Fold Leftmenu</a>
+					<a href="#" title="Fold Leftmenu" onclick="javascript:layout.showLeftMenu(false);">Fold Leftmenu</a>
 				</div>
 				<div class="inner">
 					<div class="lnb">
 						<ul>
-							<li class="menu1 on"><a href="#;"><span>Order Order OrderOrder Order</span></a>
-								<ul>
-									<li class="on"><a href="#;"><span>Purchase OrderPurchase Order</span></a>
-										<ul>
-											<li><a href="#;">Place Order</a></li>
-											<li class="on"><a href="#;">Product Information</a></li>
-											<li><a href="#;">Cart</a></li>
-											<li><a href="#;">PL List</a></li>
-										</ul></li>
-									<li><a href="#;"><span>Sub Menu2</span></a></li>
-									<li><a href="#;"><span>Sub Menu3</span></a></li>
-								</ul></li>
-							<li class="menu2"><a href="#;"><span>Delivery</span></a></li>
-							<li class="menu3">
-								<ul>
-									<li class="on">
-										<ul>
-											<li><a href="#;">Place Order</a></li>
-											<li class="on"><a href="#;">Product Information</a></li>
-											<li><a href="#;">Cart</a></li>
-											<li><a href="#;">PL List</a></li>
+							<li class="menu1" th:each="menu1 : ${session.menuList}" th:if="${menu1.MENU_LEVEL}==1" th:id="${menu1.MENU_ID}">
+								<a href="javascript:void(0);" th:onclick="'javascript:layout.clickMenu(\'' + ${menu1.MENU_ID} + '\', \'' + ${menu1.MENU_URL} + '\');'"><span th:text="${menu1.MENU_NAME}"></span></a>
+								<ul style="display: none;" th:name="${menu1.MENU_ID}">
+									<li th:each="menu2 : ${session.menuList}" th:if="${menu2.MENU_LEVEL==2 and menu2.UPPER_MENU_ID==menu1.MENU_ID}" th:id="${menu2.MENU_ID}" th:attrappend="upper=${menu2.UPPER_MENU_ID}">
+										<a href="javascript:void(0);" th:onclick="'javascript:layout.clickMenu(\'' + ${menu2.MENU_ID} + '\', \'' + ${menu2.MENU_URL} + '\');'"><span th:text="${menu2.MENU_NAME}"></span></a>
+										<ul style="display: none;" th:name="${menu2.MENU_ID}">
+											<li th:each="menu3 : ${session.menuList}" th:if="${menu3.MENU_LEVEL==3 and menu3.UPPER_MENU_ID==menu2.MENU_ID}" th:id="${menu3.MENU_ID}" th:attrappend="upper=${menu3.UPPER_MENU_ID}">
+												<a href="javascript:void(0);" th:onclick="'javascript:layout.clickMenu(\'' + ${menu3.MENU_ID} + '\', \'' + ${menu3.MENU_URL} + '\');'" th:text="${menu3.MENU_NAME}"></a>
+											</li>
 										</ul>
 									</li>
 								</ul>
 							</li>
-							<li class="menu4"><a href="#;"><span>Admin</span></a></li>
 						</ul>
 					</div>
 				</div>
@@ -84,9 +143,9 @@
 			<!-- /leftmenu view -->
 
 			<!-- leftmenu hide -->
-			<div class="leftmenu" style="display: none; left: -210px;">
+			<div class="leftmenu" style="display: none; left: -210px;" id="divFoldLeftMenuOff">
 				<div class="fold_menu view_menu">
-					<a href="#;" title="Unfold Leftmenu">Unfold Leftmenu</a>
+					<a href="#;" title="Unfold Leftmenu" onclick="javascript:layout.showLeftMenu(true);">Unfold Leftmenu</a>
 				</div>
 				<div class="inner">
 					<div class="lnb"></div>

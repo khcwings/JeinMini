@@ -101,80 +101,53 @@ public class JeinMiniApplicationTests {
 		menu.setCreateId("jeinsoft");
 		
 		// 로그인 페이지
-		menu.setMenuId("CM00001");
-		menu.setMenuUrl("/common/login");
-		menu.setMenuName("로그인");
-		menu.setMenuPath("/common/login");
-		menu.setMenuType("COMMON");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menu.setLoginYn('N');
-		menuRepo.save(menu);
+		setMenu("CMV00001", "/common/view/login", "로그인", "/common/login", "", "COMMON", 1, 1, 'N');
 
 		// 로그아웃 페이지
-		menu.setMenuId("CM00002");
-		menu.setMenuUrl("/common/loginout");
-		menu.setMenuName("로그아웃");
-		menu.setMenuPath("/common/loginout");
-		menu.setMenuType("COMMON");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menu.setLoginYn('N');
-		menuRepo.save(menu);
+		setMenu("CMV00002", "/common/view/loginout", "로그아웃", "/common/loginout", "", "COMMON", 1, 1, 'N');
 
 		// 메인 페이지
-		menu.setMenuId("CM00003");
-		menu.setMenuUrl("/common/view/main");
-		menu.setMenuName("메인");
-		menu.setMenuPath("/common/main");
-		menu.setMenuType("COMMON");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menuRepo.save(menu);
+		setMenu("CMV00003", "/common/view/main", "메인", "/common/main", "", "COMMON", 1, 1);
 
 		// 윈도우 팝업 페이지
-		menu.setMenuId("CP00001");
-		menu.setMenuUrl("/common/popup/windowPopup01");
-		menu.setMenuName("윈도우 팝업 유형 01");
-		menu.setMenuPath("/layout/windowPopup01");
-		menu.setMenuType("POPUP");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menu.setLoginYn('N');
-		menuRepo.save(menu);
+		setMenu("CMP00001", "/common/popup/windowPopup01", "윈도우 팝업", "/layout/windowPopup01", "", "POPUP", 1, 1, 'N');
 
 		// 샘플 팝업 페이지
-		menu.setMenuId("SP00001");
-		menu.setMenuUrl("/sample/view/layerPopup");
-		menu.setMenuName("레이어 팝업");
-		menu.setMenuPath("/sample/layerPopup");
-		menu.setMenuType("POPUP");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menuRepo.save(menu);
+		setMenu("SP00001", "/sample/view/layerPopup", "레이어 팝업", "/sample/layerPopup", "", "POPUP", 1, 1);
 
-		// 샘플 TOP 페이지
-		menu.setMenuId("SM00001");
-		menu.setMenuUrl("/sample/view/layerPopup");
-		menu.setMenuName("샘플 TOP");
-		menu.setMenuType("VIEW");
-		menu.setMenuLevel(1);
-		menu.setDisplayOrder(1);
-		menuRepo.save(menu);
-
+		// 샘플 TOP 페이지		
+		setMenu("SM00001", "", "Sample", "", "", "VIEW", 1, 1);
 		for(int i = 2; i < 5; i++) {
-			menu.setMenuId("SM0000" + i);
-			menu.setMenuUrl("/sample/view/sample0" + i);
-			menu.setMenuName("샘플 0" + i);
-			menu.setMenuPath("/sample/sample0" + i);
-			menu.setUpperMenuId("SM00001");
-			menu.setMenuType("VIEW");
-			menu.setMenuLevel(2);
-			menu.setDisplayOrder(i);
-			menuRepo.save(menu);
+			setMenu("SM0000" + i, "/sample/view/sample0" + i, "샘플 0" + i, "/sample/sample0" + i, "SM00001", "VIEW", 2, i);
 		}
+		setMenu("ADV00001", "", "Admin", "", "", "VIEW", 1, 1);
+		setMenu("ADV00002", "", "메뉴", "", "ADV00001", "VIEW", 2, 1);
+		setMenu("ADV00003", "", "유저", "", "ADV00001", "VIEW", 2, 2);
+		setMenu("ADV00004", "", "권한", "", "ADV00001", "VIEW", 2, 3);
+		setMenu("ADV00005", "/admin/view/menuManager", "메뉴관리", "/admin/menuManager", "ADV00002", "VIEW", 3, 1);
+		setMenu("ADV00006", "/admin/view/userManager", "유저관리", "/admin/userManager", "ADV00003", "VIEW", 3, 1);
+		setMenu("ADV00007", "/admin/view/roleManager", "권한관리", "/admin/roleManager", "ADV00004", "VIEW", 3, 1);
+		setMenu("ADV00008", "/admin/view/roleUserManager", "유저권한관리", "/admin/roleUserManager", "ADV00005", "VIEW", 3, 2);
+		setMenu("ADV00009", "/admin/view/roleMenuManager", "메뉴권한관리", "/admin/roleMenuManager", "ADV00005", "VIEW", 3, 3);
+	}
+	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder) {
+		setMenu(menuId, menuUrl, menuName, menuPath, upperMenuId, menuType, menuLevel, displayOrder, 'Y');
 	}
 	
+	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder, char loginYn) {
+		CommonMenu menu = new CommonMenu();
+		menu.setCreateId("jeinsoft");
+		menu.setMenuId(menuId);
+		menu.setMenuUrl(menuUrl);
+		menu.setMenuName(menuName);
+		menu.setMenuPath(menuPath);
+		menu.setUpperMenuId(upperMenuId);
+		menu.setMenuType(menuType);
+		menu.setMenuLevel(menuLevel);
+		menu.setLoginYn(loginYn);
+		menu.setDisplayOrder(displayOrder);
+		menuRepo.save(menu);
+	}
 	/**
 	 * 권한과 유저간의 관계
 	 */
@@ -189,10 +162,13 @@ public class JeinMiniApplicationTests {
 		roleUser.setEndDt("20201231");
 		roleUser.setCreateId("jeinsoft");
 		roleUserRepo.save(roleUser);
+		
+		roleUserPk.setRoleId("ADMIN_001");
+		roleUserRepo.save(roleUser);
 	}
 	
 	/**
-	 * 권한과 유저간의 관계
+	 * 권한과 메뉴ㅜ의 관계
 	 */
 	@Test
 	public void insertCommonRoleMenu() {
@@ -220,6 +196,26 @@ public class JeinMiniApplicationTests {
 		roleMenuRepo.save(roleMenu);
 
 		roleMenuPk.setMenuId("SM00004");
+		roleMenuRepo.save(roleMenu);
+		
+		roleMenuPk.setRoleId("ADMIN_001");
+		roleMenuPk.setMenuId("ADV00001");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00002");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00003");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00004");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00005");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00006");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00007");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00008");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("ADV00009");
 		roleMenuRepo.save(roleMenu);
 	}
 

@@ -3,7 +3,7 @@
 	
 <mapper namespace="com.jein.mini.common.dao.CommonMenuMapper">
 	<select id="selectMenuList" parameterType="Map" resultType="Map">
-		SELECT  CM.MENU_ID, CM.MENU_NAME, CM.MENU_LEVEL, CM.DISPLAY_ORDER, RU.START_DT
+		SELECT  CM.MENU_ID, CM.MENU_NAME, CM.MENU_URL, CM.MENU_LEVEL, CM.UPPER_MENU_ID, CM.DISPLAY_ORDER, RU.START_DT
 		FROM 	CM_USER CU
 				, CM_ROLE_USER RU
 		        , CM_ROLE CR 
