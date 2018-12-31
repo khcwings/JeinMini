@@ -19,4 +19,10 @@ public class AdminController extends AbstractController {
 		LOG.info("##### [AdminController-getMenuManager] VIEW START ######");
 		LOG.info("##### [AdminController-getMenuManager] Params => " + param.toString());
 	}
+	
+	@GetMapping("/view/codeManager")
+	public void getCodeManager(Model model, @RequestParam Map<String, Object> param) {
+		LOG.info("##### [AdminController-getCodeManager] VIEW START ######");
+		LOG.info("##### [AdminController-getCodeManager] Params => " + param.toString());
+	}
 }

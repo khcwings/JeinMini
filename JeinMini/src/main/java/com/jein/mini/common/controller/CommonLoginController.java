@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,16 +41,18 @@ public class CommonLoginController extends AbstractController {
 
 	@Value("${server.context-path}")
 	private String contentPath;
+	
+	@Value("${page.login.url}")
+	private String loginUrl;
 
 	@Value("${page.main.url}")
 	private String mainPageUrl;
-
 
 	/**
 	 * 로그인 페이지
 	 */
 	@GetMapping("/view/login")
-	public ModelAndView getViewLogin(HttpSession session, Model model) {
+	public ModelAndView getViewLogin(HttpSession session) {
 		LOG.info("##### [CommonLoginController-getViewLogin] VIEW START ######");
 		ModelAndView mnv = new ModelAndView();
 		
@@ -63,16 +64,34 @@ public class CommonLoginController extends AbstractController {
 		return mnv;
 	}
 	
+	/**
+	 * 로그아웃 페이지
+	 */
 	@GetMapping("/view/logout")
-	public void getViewLogout(HttpSession session) {
+	public ModelAndView getViewLogout(HttpSession session) {
+		LOG.info("##### [CommonLoginController-getViewLogout] VIEW START ######");
+		ModelAndView mnv = new ModelAndView();
 		
 		// 로그인이 되어 있는 경우에만 로그아웃 로직을 수행한다. 
 		CommonUser userInfo		= (CommonUser)session.getAttribute(SessionConstant.SESSION_USER_INFO_KEY);
 		if(userInfo != null) {
-			
+			// Session Clear
+			session.invalidate();
+		} else {
+			mnv.setViewName("redirect:" + loginUrl);
 		}
+		return mnv;
 	}
 
+	/**
+	 * 메인 페이지
+	 */
+	@GetMapping("/view/main")
+	public void getViewMain() {
+		LOG.info("###### Common Main : VIEW START ######");
+		
+	}
+	
 	/**
 	 * 로그인 요청을 처리한다. 
 	 */
@@ -107,11 +126,5 @@ public class CommonLoginController extends AbstractController {
 		return retMap;
 	}
 
-	/**
-	 * 메인 페이지
-	 */
-	@GetMapping("/view/main")
-	public void getViewMain() {
-		LOG.info("###### Common Main : VIEW START ######");
-	}
+	
 }

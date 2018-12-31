@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 <meta charset="UTF-8" />
+<title>Jein Soft Mini</title>
 <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.png}">
 <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.png}">
 <link rel="stylesheet" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.css}" />
@@ -97,15 +98,18 @@
 			</div>
 			<div class="quickmenu">
 				<ul>
-					<li th:each="menu,index : ${session.menuList}" th:if="${menu.MENU_LEVEL}==1"><a href="javascript:void(0);" th:onclick="'javascript:layout.clickTopMenu(\'' + ${menu.MENU_ID} + '\');'"><em
-							th:class="${'qm' + ((index.count%3)+1)}"></em><span th:text="${menu.MENU_NAME}"></span></a></li>
+					<li th:each="menu,index : ${session.menuList}" th:if="${menu.MENU_LEVEL}==1">
+						<a href="javascript:void(0);" th:onclick="'javascript:layout.clickTopMenu(\'' + ${menu.MENU_ID} + '\');'">
+							<em	th:class="${'qm' + ((index.count%3)+1)}"></em><span th:text="${menu.MENU_NAME}"></span>
+						</a>
+					</li>
 				</ul>
 			</div>
 			<div class="userinfo">
 				<ul>
 					<li class="userid"><span>Welcome!</span> <span th:text="${session.userInfo.userName}"></span>님</li>
 					<li class="logout"><div class="btn type3">
-							<a href="#;"><span>Logout</span></a>
+							<a href="javascript:void(0);" onclick="javascript:layout.goPageChange('/common/view/logout');"><span>Logout</span></a>
 						</div></li>
 					<li class="setup"><a href="#" title="User Info Set-up">User Info Set-up</a></li>
 				</ul>
@@ -169,7 +173,7 @@
 
 					<!-- page title -->
 					<div class="page_title">
-						<h2>Menu vs User Group</h2>
+						<h2 th:text="${viewMenuName}"></h2>
 					</div>
 					<!-- page title -->
 

@@ -16,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.jein.mini.biz.common.domain.CommonCode;
 import com.jein.mini.biz.common.domain.CommonMenu;
 import com.jein.mini.biz.common.domain.CommonRole;
 import com.jein.mini.biz.common.domain.CommonRoleMenu;
 import com.jein.mini.biz.common.domain.CommonRoleUser;
 import com.jein.mini.biz.common.domain.CommonUser;
+import com.jein.mini.biz.common.persistence.CommonCodeRepository;
 import com.jein.mini.biz.common.persistence.CommonMenuRepository;
 import com.jein.mini.biz.common.persistence.CommonRoleMenuRepository;
 import com.jein.mini.biz.common.persistence.CommonRoleRepository;
@@ -50,6 +52,9 @@ public class JeinMiniApplicationTests {
 
 	@Autowired
 	private CommonRoleMenuRepository roleMenuRepo;
+	
+	@Autowired
+	private CommonCodeRepository codeRepo;
 	
 
 	@Autowired
@@ -104,7 +109,7 @@ public class JeinMiniApplicationTests {
 		setMenu("CMV00001", "/common/view/login", "로그인", "/common/login", "", "COMMON", 1, 1, 'N');
 
 		// 로그아웃 페이지
-		setMenu("CMV00002", "/common/view/loginout", "로그아웃", "/common/loginout", "", "COMMON", 1, 1, 'N');
+		setMenu("CMV00002", "/common/view/logout", "로그아웃", "/common/logout", "", "COMMON", 1, 1, 'N');
 
 		// 메인 페이지
 		setMenu("CMV00003", "/common/view/main", "메인", "/common/main", "", "COMMON", 1, 1);
@@ -120,34 +125,20 @@ public class JeinMiniApplicationTests {
 		for(int i = 2; i < 5; i++) {
 			setMenu("SM0000" + i, "/sample/view/sample0" + i, "샘플 0" + i, "/sample/sample0" + i, "SM00001", "VIEW", 2, i);
 		}
-		setMenu("ADV00001", "", "Admin", "", "", "VIEW", 1, 1);
-		setMenu("ADV00002", "", "메뉴", "", "ADV00001", "VIEW", 2, 1);
-		setMenu("ADV00003", "", "유저", "", "ADV00001", "VIEW", 2, 2);
-		setMenu("ADV00004", "", "권한", "", "ADV00001", "VIEW", 2, 3);
-		setMenu("ADV00005", "/admin/view/menuManager", "메뉴관리", "/admin/menuManager", "ADV00002", "VIEW", 3, 1);
-		setMenu("ADV00006", "/admin/view/userManager", "유저관리", "/admin/userManager", "ADV00003", "VIEW", 3, 1);
-		setMenu("ADV00007", "/admin/view/roleManager", "권한관리", "/admin/roleManager", "ADV00004", "VIEW", 3, 1);
-		setMenu("ADV00008", "/admin/view/roleUserManager", "유저권한관리", "/admin/roleUserManager", "ADV00005", "VIEW", 3, 2);
-		setMenu("ADV00009", "/admin/view/roleMenuManager", "메뉴권한관리", "/admin/roleMenuManager", "ADV00005", "VIEW", 3, 3);
-	}
-	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder) {
-		setMenu(menuId, menuUrl, menuName, menuPath, upperMenuId, menuType, menuLevel, displayOrder, 'Y');
+		setMenu("AMV00001", "", "Admin", "", "", "VIEW", 1, 1);
+		setMenu("AMV00002", "", "메뉴", "", "AMV00001", "VIEW", 2, 1);
+		setMenu("AMV00003", "", "유저", "", "AMV00001", "VIEW", 2, 2);
+		setMenu("AMV00004", "", "권한", "", "AMV00001", "VIEW", 2, 3);
+		setMenu("AMV00005", "/admin/view/menuManager", "메뉴관리", "/admin/menuManager", "AMV00002", "VIEW", 3, 1);
+		setMenu("AMV00006", "/admin/view/userManager", "유저관리", "/admin/userManager", "AMV00003", "VIEW", 3, 1);
+		setMenu("AMV00007", "/admin/view/roleManager", "권한관리", "/admin/roleManager", "AMV00004", "VIEW", 3, 1);
+		setMenu("AMV00008", "/admin/view/roleUserManager", "유저권한관리", "/admin/roleUserManager", "AMV00005", "VIEW", 3, 2);
+		setMenu("AMV00009", "/admin/view/roleMenuManager", "메뉴권한관리", "/admin/roleMenuManager", "AMV00005", "VIEW", 3, 3);
+
+		setMenu("AMV00010", "", "코드", "", "AMV00001", "VIEW", 2, 4);
+		setMenu("AMV00011", "/admin/view/codeManager", "공통코드관리", "/admin/codeManager", "AMV00010", "VIEW", 3, 1);
 	}
 	
-	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder, char loginYn) {
-		CommonMenu menu = new CommonMenu();
-		menu.setCreateId("jeinsoft");
-		menu.setMenuId(menuId);
-		menu.setMenuUrl(menuUrl);
-		menu.setMenuName(menuName);
-		menu.setMenuPath(menuPath);
-		menu.setUpperMenuId(upperMenuId);
-		menu.setMenuType(menuType);
-		menu.setMenuLevel(menuLevel);
-		menu.setLoginYn(loginYn);
-		menu.setDisplayOrder(displayOrder);
-		menuRepo.save(menu);
-	}
 	/**
 	 * 권한과 유저간의 관계
 	 */
@@ -199,26 +190,73 @@ public class JeinMiniApplicationTests {
 		roleMenuRepo.save(roleMenu);
 		
 		roleMenuPk.setRoleId("ADMIN_001");
-		roleMenuPk.setMenuId("ADV00001");
+		roleMenuPk.setMenuId("AMV00001");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00002");
+		roleMenuPk.setMenuId("AMV00002");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00003");
+		roleMenuPk.setMenuId("AMV00003");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00004");
+		roleMenuPk.setMenuId("AMV00004");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00005");
+		roleMenuPk.setMenuId("AMV00005");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00006");
+		roleMenuPk.setMenuId("AMV00006");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00007");
+		roleMenuPk.setMenuId("AMV00007");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00008");
+		roleMenuPk.setMenuId("AMV00008");
 		roleMenuRepo.save(roleMenu);
-		roleMenuPk.setMenuId("ADV00009");
+		roleMenuPk.setMenuId("AMV00009");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("AMV00010");
+		roleMenuRepo.save(roleMenu);
+		roleMenuPk.setMenuId("AMV00011");
 		roleMenuRepo.save(roleMenu);
 	}
+	
+	/**
+	 * 공통 코드 등록
+	 */
+	@Test
+	public void insertCommonCode() {
+		setCode("GRP00001", "", "모듈코드관리", "", 1, 'Y');
+		setCode("GRP00001", "CM", "모듈코드관리", "공통모듈", 2, 'Y');
+		setCode("GRP00001", "AM", "모듈코드관리", "관리자모듈", 2, 'Y');
+		setCode("GRP00001", "SM", "모듈코드관리", "샘플모듈", 2, 'Y');		
+	}
 
+	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder) {
+		setMenu(menuId, menuUrl, menuName, menuPath, upperMenuId, menuType, menuLevel, displayOrder, 'Y');
+	}
+	
+	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder, char loginYn) {
+		CommonMenu menu = new CommonMenu();
+		menu.setCreateId("jeinsoft");
+		menu.setMenuId(menuId);
+		menu.setMenuUrl(menuUrl);
+		menu.setMenuName(menuName);
+		menu.setMenuPath(menuPath);
+		menu.setUpperMenuId(upperMenuId);
+		menu.setMenuType(menuType);
+		menu.setMenuLevel(menuLevel);
+		menu.setLoginYn(loginYn);
+		menu.setDisplayOrder(displayOrder);
+		menuRepo.save(menu);
+	}
+	
+	public void setCode(String codeGrpId, String codeId, String codeGrpName, String codeName, int codeLevel, char useYn) {
+		CommonCode code = new CommonCode();
+		CommonCode.CodePk codePk = new CommonCode.CodePk();
+		codePk.setCodeGrpId(codeGrpId);
+		codePk.setCodeId(codeId);
+		code.setId(codePk);
+		code.setCodeGrpName(codeGrpName);
+		code.setCodeName(codeName);
+		code.setCodeLevel(codeLevel);
+		code.setUseYn(useYn);
+		code.setCreateId("jeinsoft");
+		codeRepo.save(code);
+	}
 	/*
 @Test
 public void testCrypt() {
@@ -268,4 +306,5 @@ public void mailSend() {
 	mailService.sendTemplateMail("mail/mailSampleTemplate", receiver, "[다수]JEIN MINI TEST => TEMPLATE MAIL + FILE", model, attachFiles);
 	LOG.debug("##### TEST MAIL SEND END #####");
 }*/
+	
 }
