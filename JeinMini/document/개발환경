@@ -35,6 +35,8 @@
 	- Thymeleaf : http://www.thymeleaf.org/eclipse-plugin-update-site
 	- STS3 : http://download.springsource.com/release/TOOLS/update/e4.6/
 	
+	Properties Editor
+	
 # Profile 적용하기
 	- VM arguments에 [-Dspring.profiles.active=local] 설정 추가
 

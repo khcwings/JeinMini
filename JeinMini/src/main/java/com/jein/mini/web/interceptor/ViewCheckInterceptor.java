@@ -1,7 +1,5 @@
 package com.jein.mini.web.interceptor;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -83,8 +81,9 @@ public class ViewCheckInterceptor extends HandlerInterceptorAdapter {
 		request.removeAttribute("startTime");
 		
 		String viewPath =(String)request.getAttribute("viewPath");
-		LOG.debug("##### " + viewPath);
-		modelAndView.setViewName(viewPath);
+		if(modelAndView.getViewName().indexOf("redirect") != 0) {
+			modelAndView.setViewName(viewPath);
+		}
 		request.removeAttribute("viewPath");
 		
 		super.postHandle(request, response, handler, modelAndView);				

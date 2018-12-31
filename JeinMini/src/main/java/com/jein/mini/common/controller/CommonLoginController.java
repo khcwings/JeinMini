@@ -1,11 +1,8 @@
 package com.jein.mini.common.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -13,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,8 +51,26 @@ public class CommonLoginController extends AbstractController {
 	 * 로그인 페이지
 	 */
 	@GetMapping("/view/login")
-	public void getViewLogin() {
+	public ModelAndView getViewLogin(HttpSession session, Model model) {
 		LOG.info("##### [CommonLoginController-getViewLogin] VIEW START ######");
+		ModelAndView mnv = new ModelAndView();
+		
+		// 로그인이 되어 있다면 메인 화면으로 전환한다. 
+		CommonUser userInfo		= (CommonUser)session.getAttribute(SessionConstant.SESSION_USER_INFO_KEY);
+		if(userInfo != null) {
+			mnv.setViewName("redirect:" + mainPageUrl);
+		}
+		return mnv;
+	}
+	
+	@GetMapping("/view/logout")
+	public void getViewLogout(HttpSession session) {
+		
+		// 로그인이 되어 있는 경우에만 로그아웃 로직을 수행한다. 
+		CommonUser userInfo		= (CommonUser)session.getAttribute(SessionConstant.SESSION_USER_INFO_KEY);
+		if(userInfo != null) {
+			
+		}
 	}
 
 	/**
