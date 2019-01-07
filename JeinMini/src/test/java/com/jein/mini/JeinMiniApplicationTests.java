@@ -223,6 +223,11 @@ public class JeinMiniApplicationTests {
 		setCode("GRP00001", "CM", "모듈코드관리", "공통모듈", 2, 'Y');
 		setCode("GRP00001", "AM", "모듈코드관리", "관리자모듈", 2, 'Y');
 		setCode("GRP00001", "SM", "모듈코드관리", "샘플모듈", 2, 'Y');		
+
+		setCode("GRP00002", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00002", "CM", "모듈코드관리(테스트)", "공통모듈", 2, 'N');
+		setCode("GRP00002", "AM", "모듈코드관리(테스트)", "관리자모듈", 2, 'N');
+		setCode("GRP00002", "SM", "모듈코드관리(테스트)", "샘플모듈", 2, 'N');	
 	}
 
 	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder) {

@@ -3,83 +3,45 @@
 <head>
 <meta charset="UTF-8" />
 <script type="text/javascript">
-	function createJqGrid(gridId, colModel, option) {
-		var height 		= 200;	// 기본 그리드 높이(number, ??%, 'auto')
-		var rowNum 		= 10;	// 기본 그리드 Row 수
-		var cellEdit 	= true;// 셀 편집 활성화 여부
-		var noDataMsg 	= "데이터가 존재하지 않습니다.";
-		
-		if(!jut.isEmpty(option)) {			
-			if(!jut.isEmpty(option.height))    { height 	= option.height; 	}
-			if(!jut.isEmpty(option.rowNum))    { rowNum 	= option.rowNum; 	}		
-			if(!jut.isEmpty(option.noDataMsg)) { noDataMsg 	= option.noDataMsg; }
-			if(!jut.isEmpty(option.cellEdit))  { cellEdit 	= option.cellEdit; 	}
-		}
-		
-		$("#" + gridId).jqGrid({
-            datatype: "local",								// 입력 데이터 유형
-            colModel: colModel,								// 그리드 셀 리스트
-			gridveiw:true,									// 그리드 성능 향상 옵션
-            autowidth:true,									// 그리드 셀 자동 넓이 설정
-			height: height,									// 그리드 높이 설정
-			cellEdit:cellEdit,								// 그리드 편집 가능 여부
-			cellsubmit:'clientArray',						// 그리드 편집시 
-			viewrecords: false,	
-			rowNum: rowNum,									// 그리드에 보여줄 레코드 수
-            shrinkToFit:true,								// 우측 스크롤바 위에 공강을 없애고 채움
-            loadonce:true,									// 한번만 데이터롤 로드함.
-            pager: "#jqGridDefaultPager",
-            loadComplete:function(data) {
-            	console.log("JQGRID LOAD COMPLETE =============> ");
-            }, 
-            afterSaveCell:function(rowId, cellName, value, iRow, iCol) {
-            	console.log("JQGRID AFTER SAVE CELL =============> ");
-            	console.log("RowId : " + rowId + ", CellName : " + cellName);
-            }, 
-            afterEditCell:function (rowId, cellName, value, iRow, iCol){
-            	console.log("JQGRID AFTER EDIT CELL =============> ");
-            	console.log("RowId : " + rowId + ", CellName : " + cellName);
-            }
-        });
-		$("#" + gridId).parent().parent().parent().find(".ui-jqgrid-bdiv").prepend("<div class='ui-jqgrid-nodata d_none grid_nodata' id='jqGridNoData'>" + noDataMsg + "</div>");
-		$("#jqGridCustomPager").addClass("d_none");			// Paging 영역 숨기기
-	}
-	
-	function setLocalData(gridId, _data, keyId) {
-		var data = eval("_data." + keyId);
-		console.log(data);
-		$("#" + gridId).jqGrid('setGridParam', {
-			datatype: "local",	
-			shrinkToFit:true,
-			data:data,
-			gridComplete:function() {
-				console.log("Grid Complete =====> ");
-			}
-		}).trigger("reloadGrid");
-		console.log("###################");
-	}
-	
 	var codeManager = {
-			init : function() {
-				console.log("################# codeManager.init #################");
-				
-				var colModel = [
-		            { name: 'codeGrpId', 	label: '그룹 코드', 		width: 75  },
-		            { name: 'codeGrpName', 	label: '그룹 코드명', 		width: 150, 	editable: true, edittype:'text'},
-		            { name: 'codeDesc',		label: '그룹 코드 상세', 	width: 150 }, //, formatter : 'date', formatoptions: { srcformat : 'Y-m-d H:i:s', newformat :'ShortDate'}
-		            { name: 'useYn',		label: '사용 여부', 		width: 150, 	editable: true, edittype:'select', editoptions:{value:"Y:Yes;N:No"}, formatoptions:{disabled:false}},
-		            { name: 'updateId', 	label: '수정(생성) ID',		width: 150 },
-		            { name: 'updateDt', 	label: '수정(생성) 시간'}
-		        ];
-				
-				// 그리드 생성
-				createJqGrid("jqGrid", colModel, {height:200});
-			}
-	}
+		searchData : {
+			
+		}
+	};
+	
+	// 초기화 함수
+	codeManager.init = function() {
+		console.log("##### codeManager.init #####");
+		// 버튼 바인딩
+		$("#addBtn").bind("click", codeManager.addGrp);
+		$("#delBtn").bind("click", codeManager.deleteGrp);
+		
+		/**
+		 * Grid의 Row Id 설정을 위햐 key값을 설정해야 함.
+		 **/
+		var colModel = [
+			{ name: 'codeGrpId', 	label: '그룹 코드', 		width: 75, 		key:true  },	// Grid의 Key 설정 필요
+            { name: 'codeGrpName', 	label: '그룹 코드명', 		width: 150, 	editable: true, edittype:'text'},
+            { name: 'codeDesc',		label: '그룹 코드 상세', 	width: 150 }, //, formatter : 'date', formatoptions: { srcformat : 'Y-m-d H:i:s', newformat :'ShortDate'}
+            //{ name: 'useYn',		label: '사용 여부', 		width: 150, 	editable: true, edittype:'select', formatter: 'select',  editoptions:{value:"Y:Yes;N:No"}, formatoptions:{disabled:true}},
+            //{ name: 'useYn',		label: '사용 여부', 		width: 150, 	formatter:setSelectCombo},
+            { name: 'updateId', 	label: '수정(생성) ID',		width: 150 },
+            { name: 'updateDt', 	label: '수정(생성) 시간'}
+        ];
+		
+		var gridOption = {
+			height:200, 		// 그리드 옵션
+			multiselect:true,	// CheckBox 활성화 여부
+			multiboxonly:true,	// CheckBox 단일행 선택 활성화 여부
+			onSelectRow:codeManager.searchCode
+		}
+		// 그리드 생성
+		jgrid.createJqGrid("jqGrid", colModel, gridOption);
+	};
 	
 	// 그룹 코드 검색 이벤트
 	codeManager.searchGrp = function() {
-		console.log("################# codeManager.searchGrp #################");
+		console.log("##### codeManager.searchGrp #####");
 		var param = {
 			codeGrpId 		: $("#searGroupCode").val()
 			, codeGrpName 	: $("#searGroupName").val()
@@ -89,13 +51,39 @@
 	};
 	// 그룹 코드 콜백 이벤트
 	codeManager.searchGrpCallback = function(res, req) {
-		console.log("################# codeManager.searchGrpCallback #################");
-		console.log(res);
-		setLocalData("jqGrid", res, "codeList");
+		console.log("##### codeManager.searchGrpCallback #####");
+		jgrid.setLocalData("jqGrid", res.codeList);
+	};
+	// 그룹 코드 추가
+	codeManager.addGrp = function() {
+		console.log("##### codeManager.addGrp #####");
+		
+		jcm.openLayerPopup
+	};
+	// 그룹 코드 삭제
+	codeManager.deleteGrp = function() {
+		console.log("##### codeManager.deleteGrp #####");
+		
+		console.log($('#jqGrid').jqGrid('getGridParam', 'selarrrow'));
+	};
+
+	
+	codeManager.searchCode = function(rowid, status, e) {
+		
 	};
 	
+	function setSelectCombo(callValue, options, rowdata, action) {
+		var selectOption = [{value:'Y', name:'Yes'}, {value:'N', name:'No'}];
+		var result = '<select>';
+		$.each(selectOption, function(idx, obj) {
+			result += '<option value="' + obj.value + '" ' + (callValue==obj.value?'selected':'') + '>' + obj.name + '</option>';
+		});
+		result += '</select>';
+		return result;
+	}
+	
 	$(document).ready(function() {
-		console.log("################# Code Manager Start #################");
+		console.log("##### Code Manager Start #####");
 		
 		// 화면 초기화
 		codeManager.init();
@@ -131,9 +119,9 @@
 		</div>
 		<div class="box_type1">
 			<div class="btn_group">
-				<div class="btn type2"><a href="#" id="addBtn"><span>Add</span></a></div>
-				<div class="btn type2"><a href="#" id="subBtn"><span>Delete</span></a></div>
-				<div class="btn type2"><a href="#" id="saveBtn"><span>Save</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="addBtn"><span>Add</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="delBtn"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn"><span>Save</span></a></div>
 			</div>
 			<div class="jqGridArea">
 				<table id="jqGrid"></table>
