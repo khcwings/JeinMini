@@ -3,16 +3,145 @@
 <head>
 <meta charset="UTF-8" />
 <script type="text/javascript">
+	function createJqGrid(gridId, colModel, option) {
+		var height 		= 200;	// 기본 그리드 높이(number, ??%, 'auto')
+		var rowNum 		= 10;	// 기본 그리드 Row 수
+		var cellEdit 	= true;// 셀 편집 활성화 여부
+		var noDataMsg 	= "데이터가 존재하지 않습니다.";
+		
+		if(!jut.isEmpty(option)) {			
+			if(!jut.isEmpty(option.height))    { height 	= option.height; 	}
+			if(!jut.isEmpty(option.rowNum))    { rowNum 	= option.rowNum; 	}		
+			if(!jut.isEmpty(option.noDataMsg)) { noDataMsg 	= option.noDataMsg; }
+			if(!jut.isEmpty(option.cellEdit))  { cellEdit 	= option.cellEdit; 	}
+		}
+		
+		$("#" + gridId).jqGrid({
+            datatype: "local",								// 입력 데이터 유형
+            colModel: colModel,								// 그리드 셀 리스트
+			gridveiw:true,									// 그리드 성능 향상 옵션
+            autowidth:true,									// 그리드 셀 자동 넓이 설정
+			height: height,									// 그리드 높이 설정
+			cellEdit:cellEdit,								// 그리드 편집 가능 여부
+			cellsubmit:'clientArray',						// 그리드 편집시 
+			viewrecords: false,	
+			rowNum: rowNum,									// 그리드에 보여줄 레코드 수
+            shrinkToFit:true,								// 우측 스크롤바 위에 공강을 없애고 채움
+            loadonce:true,									// 한번만 데이터롤 로드함.
+            pager: "#jqGridDefaultPager",
+            loadComplete:function(data) {
+            	console.log("JQGRID LOAD COMPLETE =============> ");
+            }, 
+            afterSaveCell:function(rowId, cellName, value, iRow, iCol) {
+            	console.log("JQGRID AFTER SAVE CELL =============> ");
+            	console.log("RowId : " + rowId + ", CellName : " + cellName);
+            }, 
+            afterEditCell:function (rowId, cellName, value, iRow, iCol){
+            	console.log("JQGRID AFTER EDIT CELL =============> ");
+            	console.log("RowId : " + rowId + ", CellName : " + cellName);
+            }
+        });
+		$("#" + gridId).parent().parent().parent().find(".ui-jqgrid-bdiv").prepend("<div class='ui-jqgrid-nodata d_none grid_nodata' id='jqGridNoData'>" + noDataMsg + "</div>");
+		$("#jqGridCustomPager").addClass("d_none");			// Paging 영역 숨기기
+	}
+	
+	function setLocalData(gridId, _data, keyId) {
+		var data = eval("_data." + keyId);
+		console.log(data);
+		$("#" + gridId).jqGrid('setGridParam', {
+			datatype: "local",	
+			shrinkToFit:true,
+			data:data,
+			gridComplete:function() {
+				console.log("Grid Complete =====> ");
+			}
+		}).trigger("reloadGrid");
+		console.log("###################");
+	}
+	
+	var codeManager = {
+			init : function() {
+				console.log("################# codeManager.init #################");
+				
+				var colModel = [
+		            { name: 'codeGrpId', 	label: '그룹 코드', 		width: 75  },
+		            { name: 'codeGrpName', 	label: '그룹 코드명', 		width: 150, 	editable: true, edittype:'text'},
+		            { name: 'codeDesc',		label: '그룹 코드 상세', 	width: 150 }, //, formatter : 'date', formatoptions: { srcformat : 'Y-m-d H:i:s', newformat :'ShortDate'}
+		            { name: 'useYn',		label: '사용 여부', 		width: 150, 	editable: true, edittype:'select', editoptions:{value:"Y:Yes;N:No"}, formatoptions:{disabled:false}},
+		            { name: 'updateId', 	label: '수정(생성) ID',		width: 150 },
+		            { name: 'updateDt', 	label: '수정(생성) 시간'}
+		        ];
+				
+				// 그리드 생성
+				createJqGrid("jqGrid", colModel, {height:200});
+			}
+	}
+	
+	// 그룹 코드 검색 이벤트
+	codeManager.searchGrp = function() {
+		console.log("################# codeManager.searchGrp #################");
+		var param = {
+			codeGrpId 		: $("#searGroupCode").val()
+			, codeGrpName 	: $("#searGroupName").val()
+		};
+		
+		jcm.doAjax(true, "[[ @{/admin/data/codeGrpList} ]]", param, codeManager.searchGrpCallback);
+	};
+	// 그룹 코드 콜백 이벤트
+	codeManager.searchGrpCallback = function(res, req) {
+		console.log("################# codeManager.searchGrpCallback #################");
+		console.log(res);
+		setLocalData("jqGrid", res, "codeList");
+	};
+	
 	$(document).ready(function() {
-		console.log("################# SAMPLE 03 START #################");
-		jcm.setDatepicker("jquiDatepicker1");
-		jcm.setDatepicker("jquiDatepicker2");
+		console.log("################# Code Manager Start #################");
+		
+		// 화면 초기화
+		codeManager.init();
+		
+		// 검색 이벤트 설정
+		$("#searchBtn").bind("click", function() { 	codeManager.searchGrp(1); 	});
 	});
+	
+	
 </script>
 </head>
 <body>
 	<section layout:fragment="content">
-		
+		<div class="box_type1">
+			<div class="tbl_type1">
+				<table>
+					<colgroup>
+						<col style="width:;">
+						<col style="width:35%;">
+						<col style="width:;">
+						<col style="width:;">
+						<col style="width:10px;">
+					</colgroup>
+					<tr>
+						<th title="Group Code">Group Code</th>
+						<td><input type="text" id="searGroupCode" name="searGroupCode" /></td>
+						<th title="Group Name">Group Name</th>
+						<td><input type="text" id="searGroupName" name="searGroupName" /></td>
+						<td class="ar"><div class="btn type2"><a href="#" id="searchBtn"><span><em class="search"></em>Search</span></a></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="box_type1">
+			<div class="btn_group">
+				<div class="btn type2"><a href="#" id="addBtn"><span>Add</span></a></div>
+				<div class="btn type2"><a href="#" id="subBtn"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="#" id="saveBtn"><span>Save</span></a></div>
+			</div>
+			<div class="jqGridArea">
+				<table id="jqGrid"></table>
+	   			<div id="jqGridDefaultPager" class="d_none"></div>
+	   			<div id="jqGridCustomPager"></div>
+	   		</div>
+		</div>
+				
 	</section>
 </body>
 </html>

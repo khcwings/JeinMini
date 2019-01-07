@@ -82,7 +82,7 @@ label {margin-left:5px; margin-right:16px; vertical-align:middle;}
 .btn.type4:hover a span {color:#fff;}
 .btn.type4.disabled a span {color:#f2f1f1;}
 
-.btn em {display:inline-block; width:16px; height:16px; margin-right:3px; margin-left:-3px; background:url(../images/ico/btn_ico.png) 0 0 no-repeat; vertical-align:middle;}
+.btn em {display:inline-block; width:16px; height:16px; margin-right:3px; margin-left:-3px; background:url(../../images/sample/btn_ico.png) 0 0 no-repeat; vertical-align:middle;}
 .btn.type2.disabled em {background-position:0 bottom;}
 .btn em.search {background-position:0 0;}
 .btn.disabled em.search {background-position:0 -16px;}
@@ -126,7 +126,7 @@ section .btn_group:first-child {margin-top:0;}
 .inputfile .btn.type2 {position:static; width:auto;}
 
 /* layou table & date table */
-table .required {display:inline-block; width:8px; height:8px; margin:0 2px 1px; background:url(../images/ico/required.png) right center no-repeat; text-indent:-9999px;}
+table .required {display:inline-block; width:8px; height:8px; margin:0 2px 1px; background:url(../../images/sample/required.png) right center no-repeat; text-indent:-9999px;}
 .tbl_type1 table .required, .tbl_type3 table .required {background-position:0 0;}
 .tbl_type2 table .required {background-position:-8px 0;}
 
@@ -158,7 +158,7 @@ table .blank {height:5px !important; padding:0 !important;}
 .tbl_type2 td {padding:2px 6px; empty-cells:show;}
 .tbl_type2 th {height:17px; border-bottom:1px solid #4672bd; border-right:1px solid #8da9ee; background-color:#7a9cee; font:bold 11px/11px Arial, Corbel, Tahoma; color:#fff; overflow:hidden;}
 .tbl_type2 th:first-child {border-left:1px solid #7a9cee;}
-.tbl_type2 th a {display:block; padding-right:6px; background:url(../images/ico/sorting.gif) right center no-repeat; color:#fff; text-decoration:none; vertical-align:middle; font:bold 11px/11px Arial, Corbel, Tahoma;}
+.tbl_type2 th a {display:block; padding-right:6px; background:url(../../images/sample/sorting.gif) right center no-repeat; color:#fff; text-decoration:none; vertical-align:middle; font:bold 11px/11px Arial, Corbel, Tahoma;}
 .tbl_type2 tr:first-child th {border-top:none;}
 .tbl_type2 td {text-align:left; height:21px; border-bottom:1px solid #ddd; border-right:1px solid #eaf1f3; font: 12px/20px Arial, Corbel, Tahoma; color:#222; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 #textDiv {line-height:20px;/* wrap real data with span tag */}
@@ -232,7 +232,7 @@ table .blank {height:5px !important; padding:0 !important;}
 .tbl_type4 td {text-align:left; padding:10px; border-bottom:1px solid #ddd; border-right:1px solid #ddd; font: 12px/20px Arial, Corbel, Tahoma; color:#222;}
 .tbl_type4 th {height:20px; border-bottom:1px solid #4672bd; border-right:1px solid #8da9ee; background-color:#7a9cee; font:bold 12px/12px Arial, Corbel, Tahoma; color:#fff; overflow:hidden;}
 .tbl_type4 th:first-child {border-left:1px solid #c9d7fb;}
-.tbl_type4 th a {display:block; padding-right:6px; background:url(../images/ico/sorting.gif) right center no-repeat; color:#fff; text-decoration:none; vertical-align:middle; font:bold 11px/11px Arial, Corbel, Tahoma;}
+.tbl_type4 th a {display:block; padding-right:6px; background:url(../../images/sample/sorting.gif) right center no-repeat; color:#fff; text-decoration:none; vertical-align:middle; font:bold 11px/11px Arial, Corbel, Tahoma;}
 .tbl_type4 tr:first-child th {border-top:none;}
 
 /* calendar */
@@ -261,7 +261,7 @@ table .blank {height:5px !important; padding:0 !important;}
 
 .calendar_input {position:relative; display:inline-block; min-width:80px;}
 .calendar_input input[type="text"] {width:100%;}
-.calendar_input a {position:absolute; top:2px; right:2px; display:inline-block; width:16px; height:16px; background:url(../images/ico/calendar.gif) 0 0 no-repeat; text-indent:-9999px; z-index:2;}
+.calendar_input a {position:absolute; top:2px; right:2px; display:inline-block; width:16px; height:16px; background:url(../../images/sample/calendar.gif) 0 0 no-repeat; text-indent:-9999px; z-index:2;}
 
 .tbl_calendar_title {height:30px;}
 .tbl_calendar_title span.title1 {display:inline-block; font:bold 17px/16px Arial, Candara, Tahoma; color:#002c7b; width:80px; text-align:center;}
@@ -303,9 +303,9 @@ table .blank {height:5px !important; padding:0 !important;}
 .tbl_calendar td dl.capa dt, .tbl_calendar td dl.capa dd {color:#7ab300;}
 .tbl_calendar td dl.sch dt, .tbl_calendar td dl.sch dd {color:#ff9000;}
 .tbl_calendar td dl.ava dt, .tbl_calendar td dl.ava dd {color:#00a8ff;}
-.tbl_calendar td dl.capa dt {text-indent:13px; background:url(../images/ico/capa.png) 2px 0 no-repeat;}
-.tbl_calendar td dl.sch dt {text-indent:13px; background:url(../images/ico/capa.png) 2px -16px no-repeat;}
-.tbl_calendar td dl.ava dt {text-indent:13px; background:url(../images/ico/capa.png) 2px -32px no-repeat;}
+.tbl_calendar td dl.capa dt {text-indent:13px; background:url(../../images/sample/capa.png) 2px 0 no-repeat;}
+.tbl_calendar td dl.sch dt {text-indent:13px; background:url(../../images/sample/capa.png) 2px -16px no-repeat;}
+.tbl_calendar td dl.ava dt {text-indent:13px; background:url(../../images/sample/capa.png) 2px -32px no-repeat;}
 .tbl_calendar td dt,
 .tbl_calendar td dd {float:left; height:18px; border-bottom:1px dotted #d9d9d9; font-size:12px; line-height:18px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .tbl_calendar td dt {width:46%; padding-left:2%;}
@@ -321,7 +321,7 @@ table .blank {height:5px !important; padding:0 !important;}
 /* popup input */
 .poplist_input {position:relative;; display:inline-block; min-width:80px;}
 .poplist_input input[type="text"] {width:100%;}
-.poplist_input a {position:absolute; top:3px; right:2px; display:inline-block; width:16px; height:16px; background:url(../images/ico/poplist.png) 0 0 no-repeat; text-indent:-9999px; z-index:2;}
+.poplist_input a {position:absolute; top:3px; right:2px; display:inline-block; width:16px; height:16px; background:url(../../images/sample/poplist.png) 0 0 no-repeat; text-indent:-9999px; z-index:2;}
 .poplist_input a.attached {background-position:-16px 0;}
 .poplist_input a.search {background-position:-32px 0;}
 
@@ -353,13 +353,13 @@ table .blank {height:5px !important; padding:0 !important;}
 .ie9 .popup.type1 .inner {border-radius:6px; background:url(../images/popup/bg_type1.gif) 0 0 repeat; behavior: url(js/PIE.htc);}
 .popup.type1 .head {height:32px; background:url(../images/popup/head_bg.gif) 0 0 repeat-x; border-radius:7px 7px 0 0;}
 .ie8 .popup.type1 .head {border-radius:7px 7px 0 0; behavior:url(js/PIE.htc);}
-.popup.type1 .head h2 {display:inline-block; height:auto; padding-top:6px; padding-left:29px; background:url(../images/ico/title.png) 12px 8px no-repeat; font: bold 16px/17px Arial, Candara, tahoma; color:#222;}
+.popup.type1 .head h2 {display:inline-block; height:auto; padding-top:6px; padding-left:29px; background:url(../../images/sample/title.png) 12px 8px no-repeat; font: bold 16px/17px Arial, Candara, tahoma; color:#222;}
 .popup.type1 .close {position:absolute; top:8px; right:15px; display:inline-block; width:18px; height:16px; background:url(../images/popup/btn_close.png) 0 0 no-repeat; text-indent:-9999px;}
 .popup.type1 .content {margin:14px;}
 .popup.type1 .box_type1 section:first-child {margin-top:0 !important;}
 
 .popup.type2 {padding:14px 13px; border:1px solid #669fda; box-shadow:1px 1px 3px #cdcdcd; background-color:#fff;}
-.popup.type2 .head h2 {display:inline-block; height:auto; padding-top:0; padding-left:10px; margin-bottom:10px; padding-left: 18px; background:url(../images/ico/title.png) 0 2px no-repeat; font: bold 16px/17px Arial, Candara, tahoma; color:#222;}
+.popup.type2 .head h2 {display:inline-block; height:auto; padding-top:0; padding-left:10px; margin-bottom:10px; padding-left: 18px; background:url(../../images/sample/title.png) 0 2px no-repeat; font: bold 16px/17px Arial, Candara, tahoma; color:#222;}
 .popup.type2 a.close {display:none;}
 
 /***for window popup***/

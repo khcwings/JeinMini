@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+.jqGridArea {
+	border-top:2px solid #646464;
+	border-right:1px solid #e5e5e5;
+	overflow:hidden;
+}
+.jqGridArea .ui-jqgrid {
+	border-radius:0;
+}
+.jqGridArea .ui-jqgrid-hbox .ui-jqgrid-htable thead th {
+	background:#f4f4f4;
+	height:34px;
+	padding:0 5px;
+	box-sizing:border-box;
+}
+.jqGridArea .ui-jqgrid-hbox .ui-jqgrid-htable thead th .ui-jqgrid-sortable {
+	font-weight:bold;
+	font-size:12px;
+}
+.jqGridArea .ui-widget-content {
+	border:1px solid #e5e5e5;
+	border-left:0;
+	border-top:0;
+}
+.jqGridArea .ui-jqgrid .ui-jqgrid-view {
+	border-left:1px solid #e5e5e5;
+}
+.jqGridArea .ui-jqgrid-bdiv .ui-jqgrid-btable tbody td {
+	height:28px;
+	font-size:12px;
+	padding:0 5px;
+	box-sizing:border-box;
+}
+.jqGridArea .ui-jqgrid-pager {
+	background:#fafafa;
+	border-left:1px solid #e5e5e5e !important;
+	border-radius:0;
+	box-sizing:inherit !important;
+}
+.ui-jqgrid .ui-jqgrid-htable .ui-jqgrid-labels th div {
+	font-weight:bold;
+}
+
+.d_none {
+	display:none ! important;
+}
+.grid_nodata {
+	display:inline-block;
+	width:100%;
+	height:32px;
+	border:0px solid #ddd;
+	text-align:center;
+	margin:10px;
+	font-size:13px;
+	font-weight:bold;
+	color:#99000a;
+}

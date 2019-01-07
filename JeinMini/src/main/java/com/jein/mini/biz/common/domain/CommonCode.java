@@ -50,6 +50,13 @@ public class CommonCode {
 	@UpdateTimestamp
 	private Timestamp updateDt;
 	
+	public String getCodeGrpId() {
+		return id.getCodeGrpId();
+	}
+	public void setCodeGrpId(String codeGrpId) {
+		id.setCodeGrpId(codeGrpId);
+	}
+	
 	@Getter
 	@Setter
 	@ToString
