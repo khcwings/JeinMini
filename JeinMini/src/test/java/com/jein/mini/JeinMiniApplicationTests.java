@@ -228,6 +228,19 @@ public class JeinMiniApplicationTests {
 		setCode("GRP00002", "CM", "모듈코드관리(테스트)", "공통모듈", 2, 'N');
 		setCode("GRP00002", "AM", "모듈코드관리(테스트)", "관리자모듈", 2, 'N');
 		setCode("GRP00002", "SM", "모듈코드관리(테스트)", "샘플모듈", 2, 'N');	
+		
+		setCode("GRP00003", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00004", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00005", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00006", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00007", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00008", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00009", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00010", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00011", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00012", "", "모듈코드관리(테스트)", "", 1, 'N');
+		setCode("GRP00013", "", "모듈코드관리(테스트)", "", 1, 'N');
+		
 	}
 
 	public void setMenu(String menuId, String menuUrl, String menuName, String menuPath, String upperMenuId, String menuType, int menuLevel, int displayOrder) {

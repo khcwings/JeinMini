@@ -138,13 +138,15 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 		jcm.showLoadingBar();
 	}
 	jcm.ajaxCallCount++;
-
 	$.ajax({
 		url      : _url,
 		async    : isAsync,
 		method   : reqMethod,
-		dataType : "json",
-		data     : inputParam,
+		data     : JSON.stringify(inputParam),
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json'
+	    },
 		success  : function(data) {
 			console.log("#### doAjax result sussess ####");
 			console.log(data);

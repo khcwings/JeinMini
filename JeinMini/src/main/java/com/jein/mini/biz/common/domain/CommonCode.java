@@ -56,6 +56,12 @@ public class CommonCode {
 	public void setCodeGrpId(String codeGrpId) {
 		id.setCodeGrpId(codeGrpId);
 	}
+	public String getCodeId() {
+		return id.getCodeGrpId();
+	}
+	public void setCodeId(String codeGrpId) {
+		id.setCodeGrpId(codeGrpId);
+	}
 	
 	@Getter
 	@Setter
@@ -65,7 +71,7 @@ public class CommonCode {
 		private static final long serialVersionUID = 1L;
 		@Column(length=8)
 		private String codeGrpId;
-		@Column(length=10)
+		@Column(length=10, nullable = true)
 		private String codeId;
 	}
 }

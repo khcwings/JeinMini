@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>jquery</artifactId>
-			<version>3.3.1</version>
+			<version>3.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -113,10 +113,11 @@
 			<version>1.12.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>free-jqgrid</artifactId>
-			<version>4.15.4</version>
+			<groupId>org.webjars</groupId>
+			<artifactId>jqgrid</artifactId>
+			<version>4.6.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>

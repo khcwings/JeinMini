@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -97,7 +97,7 @@ public class CommonLoginController extends AbstractController {
 	 */
 	@PostMapping("/data/loginProcess")
 	@ResponseBody
-	public Map<String, Object> executeLoginProcess(HttpSession session, @RequestParam Map<String, Object> params) {
+	public Map<String, Object> executeLoginProcess(HttpSession session, @RequestBody Map<String, Object> params) {
 		LOG.info("###### Common Login Process : DATA START ######");
 		LOG.info(params.toString());
 

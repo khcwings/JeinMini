@@ -6,13 +6,16 @@ var jgrid = {};
 
 jgrid.createJqGrid = function(gridId, colModel, option) {
 	var height 				= 200;		// 기본 그리드 높이(number, ??%, 'auto')
-	var rowNum 				= 10;		// 기본 그리드 Row 수
+	var rowNum 				= 10;		// 기본 그리드 Row 수, -1 설정시 무제한
 	var cellEdit 			= true;		// 셀 편집 활성화 여부
 	var multiselect			= false;	// 최상단 Check Box 사용 여부
 	var multiboxonly		= false;	// 다중 Row 선택 여부
 	var multiselectWidth	= 50;		// 최상단 Check Box 넓이값
 	var noDataMsg 			= "데이터가 존재하지 않습니다.";
+	var defaultPager		= "jqGridDefaultPager";
+	var customPager			= "jqGridCustomPager";
 	var onSelectRow			= null;		// onSelectRow Event 재설정
+	var onCellSelect		= null;		// onCellSelect Event 재설정
 
 	if(!jut.isEmpty(option)) {			
 		if(!jut.isEmpty(option.height))    { height 	= option.height; 	}
@@ -21,9 +24,14 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 		if(!jut.isEmpty(option.cellEdit))  { cellEdit 	= option.cellEdit; 	}
 		if(!jut.isEmpty(option.multiselect))   		{ multiselect 		= option.multiselect; 		}		
 		if(!jut.isEmpty(option.multiboxonly)) 		{ multiboxonly 		= option.multiboxonly; 		}
-		if(!jut.isEmpty(option.multiselectWidth))  	{ multiselectWidth 	= option.multiselectWidth; 	}
+		if(!jut.isEmpty(option.multiselectWidth))  	{ multiselectWidth 	= option.multiselectWidth; 	}	
+		if(!jut.isEmpty(option.defaultPager)) 		{ defaultPager 		= option.defaultPager; 		}
+		if(!jut.isEmpty(option.customPager))  		{ customPager 		= option.customPager; 		}
 		if(!jut.isEmpty(option.onSelectRow) && typeof(option.onSelectRow) === "function")  	{ 
 			onSelectRow 	= option.onSelectRow; 	
+		}
+		if(!jut.isEmpty(option.onCellSelect) && typeof(option.onCellSelect) === "function")  	{ 
+			onCellSelect 	= option.onCellSelect; 	
 		}
 	}	
 
@@ -42,7 +50,7 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 		multiselect:multiselect,						// 최상단 Check Box 사용 여부
 		multiselectWidth:multiselectWidth,				// 최상단 Check Box 넓이값
         multiboxonly:multiboxonly,						// 다중 Row 선택 여부
-        pager: "#jqGridDefaultPager",
+        pager: "#" + defaultPager,
         loadComplete:function(data) {
         	console.log("JQGRID LOAD COMPLETE =============> ");
         },
@@ -50,10 +58,13 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
         	if(multiselect && multiboxonly) {
         		$(this).jqGrid("resetSelection");
                 return true;
-        	}            
+        	}
+        	return true;
         },
         onCellSelect:function(rowid, iCol, cellcontent, e) {
-        	console.log("JQGRID ON CELL SELECT =============> ");
+        	if(typeof(onCellSelect) === "function") {
+        		onCellSelect(rowid, status, e);
+        	}
         },
         onSelectRow:function(rowid, status, e) {
         	if(typeof(onSelectRow) === "function") {
@@ -66,7 +77,7 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 		$("#" + gridId).parent().parent().parent().find("thead tr").eq(0).find("th").eq(0).find("input").remove();
 	}	
 	$("#" + gridId).parent().parent().parent().find(".ui-jqgrid-bdiv").prepend("<div class='ui-jqgrid-nodata d_none grid_nodata' id='jqGridNoData'>" + noDataMsg + "</div>");
-	$("#jqGridCustomPager").addClass("d_none");			// Paging 영역 숨기기
+	//$("#jqGridCustomPager").addClass("d_none");			// Paging 영역 숨기기
 };
 
 /**

@@ -24,8 +24,9 @@ public class AbstractController {
 	 * @param resultMsg
 	 * @return
 	 */
-	protected void createResultMsg(Map<String, Object> retMap, String resultCode, String resultMsg) {
+	protected Map<String, Object> createResultMsg(Map<String, Object> retMap, String resultCode, String resultMsg) {
 		retMap.put("resultCode", resultCode);
 		retMap.put("resultMsg",  resultMsg);
+		return retMap;
 	}
 }
