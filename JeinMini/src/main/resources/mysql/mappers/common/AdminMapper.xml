@@ -11,10 +11,10 @@
 		WHERE	1 = 1 
 				AND CODE_LEVEL 		= #{codeLevel}
 				<if test="codeGrpId != null and codeGrpId != ''">
-					AND CODE_GRP_ID 	LIKE '%' || #{codeGrpId} || '%'
+					AND CODE_GRP_ID 	LIKE CONCAT('%', #{codeGrpId}, '%')
 				</if>
 				<if test="codeGrpName != null and codeGrpName != ''">
-					AND CODE_GRP_NAME 	LIKE '%' || #{codeGrpName} || '%'
+					AND CODE_GRP_NAME 	LIKE CONCAT('%', #{codeGrpName}, '%')
 				</if>
 		ORDER BY CODE_GRP_ID ASC
 	</select>

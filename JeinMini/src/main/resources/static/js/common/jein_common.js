@@ -159,8 +159,14 @@ jcm.doAjax = function(_isAsync, _url, _param, _callbackFunc, _option) {
 			// 리턴값에 리다이렉트 URL이 존재한다면
 			if(!jut.isEmpty(data.redirectUrl)) {
 				window.location =  data.redirectUrl;
-			} else if(jut.isObj(_callbackFunc)) {
-				_callbackFunc(data);
+			} else if(data.resultCode == jcm.constant.result_success) { 
+				if(jut.isObj(_callbackFunc)) {
+					_callbackFunc(data, inputParam);
+				} else {
+					alert(data.resultMsg);
+				}
+			} else {
+				alert(data.resultMsg);
 			}
 		},
 		error    : function() {

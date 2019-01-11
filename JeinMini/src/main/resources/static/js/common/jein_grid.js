@@ -79,17 +79,45 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 	$("#" + gridId).parent().parent().parent().find(".ui-jqgrid-bdiv").prepend("<div class='ui-jqgrid-nodata d_none grid_nodata' id='jqGridNoData'>" + noDataMsg + "</div>");
 	//$("#jqGridCustomPager").addClass("d_none");			// Paging 영역 숨기기
 };
-
+/**
+ * 그리드에 행을 추가한다. 
+ * gridId    : 대상 그리드 아이디
+ * _rowData  : 추가 데이터
+ * _position : 추가할 행의 위치
+ * _editable : 추가할 행의 지정셀을 에디터 모드를 추가할 지 설정
+ * _cellNum  : 에디터 모드 셀 인덱스
+ */
+jgrid.addRow = function(gridId, _rowData, _position, _editable, _cellNum) {
+	var id 		 = "NEW_" + jut.getDate();
+	var rowData  = {};
+	var position = "first";
+	var editable = false;
+	var cellNum  = 1;
+	
+	if(!jut.isEmpty(_rowData) && typeof(_rowData) == "object") { rowData 	= _rowData; 	}
+	if(!jut.isEmpty(_position)) { editable 	= _position; }		
+	if(!jut.isEmpty(_editable)) { editable 	= _editable; }
+	if(!jut.isEmpty(_cellNum))  { cellNum 	= _cellNum;  }
+	
+	$("#" + gridId).jqGrid('addRowData', id, rowData, position);
+	if(editable) {
+		$("#" + gridId).jqGrid('editCell', id, cellNum, true);
+	}
+	return id;
+};
 /**
  * 그리드에 조회된 데이터를 세팅한다. 
  * gridId : 대상 그리드 아이디
- * _data : 조회된 원본 데이터
+ * _data  : 조회된 원본 데이터
  * 
  */
 jgrid.setLocalData = function(gridId, data) {
+	// 그리드 데이트 초기화
+	$("#" + gridId).jqGrid('clearGridData');
+
+	// 그리드 데이터 세팅
 	$("#" + gridId).jqGrid('setGridParam', {
 		datatype: "local",	
 		data:data
 	}).trigger("reloadGrid");
-	console.log("###################");
 };

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jein.mini.biz.common.domain.CommonCode;
 import com.jein.mini.biz.common.persistence.CommonCodeRepository;
 import com.jein.mini.common.service.AdminService;
 import com.jein.mini.constant.CommonConstant;
@@ -67,6 +66,7 @@ public class AdminController extends AbstractController {
 		LOG.debug("##### [AdminController-setCodeGrp] Params => " + param.toString());
 		// 리턴을 위한 Map
 		Map<String, Object> retMap = new HashMap<String, Object>();
+		StringBuffer retMsg = new StringBuffer();
 		
 		// 서비스 구분
 		String serviceType 	= DataUtil.getString(param, "serviceType");
@@ -79,12 +79,20 @@ public class AdminController extends AbstractController {
 		} else if("U".equalsIgnoreCase(serviceType)) {		// 수정
 			//codeRepo.save(code);		
 		} else if("D".equalsIgnoreCase(serviceType) && !codeGrpList.isEmpty()) {		// 삭제
+			retMsg.append("요청하신 데이터 " + codeGrpList.size() + "개 중 ");
+			int iSucc = 0;
 			for(Map<String, Object> item : codeGrpList) {
-				codeRepo.deleteCodeGrpId(DataUtil.getString(item, "codeGrpId"));
+				try {
+					codeRepo.deleteCodeGrpId(DataUtil.getString(item, "codeGrpId"));
+					iSucc++;
+				} catch (Exception e) {
+					LOG.error("##### [AdminController-setCodeGrp] Exception : " + e.getMessage());
+				}
 			}
+			retMsg.append(iSucc + "개 삭제에 성공하였습니다.");
 		} 
 
-		createResultMsg(retMap, CommonConstant.RESULT_SUCCESS, CommonMessageConstrant.SUCCESS_MSG);
+		createResultMsg(retMap, CommonConstant.RESULT_SUCCESS, retMsg.toString());
 
 		return retMap;
 	}
