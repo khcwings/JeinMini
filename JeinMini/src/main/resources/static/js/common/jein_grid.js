@@ -2,7 +2,21 @@
  * Jqgrid를 세팅한다. 
  */
 
-var jgrid = {};
+var jgrid = {
+	grid_info : new Map()
+};
+
+jgrid.pushGridInfo = function(grid, key, value) {
+	jgrid.grid_info.set(grid + "_" + key, value);
+};
+
+jgrid.popGridInfo = function(grid, key) {
+	if(jgrid.grid_info.has(grid + "_" + key)) {
+		return jgrid.grid_info.get(grid + "_" + key)
+	} else {
+		return "";
+	}
+};
 
 jgrid.createJqGrid = function(gridId, colModel, option) {
 	var height 				= 200;		// 기본 그리드 높이(number, ??%, 'auto')
@@ -35,6 +49,7 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 		}
 	}	
 
+	var lastSel = "";
 	$("#" + gridId).jqGrid({
         datatype: "local",								// 입력 데이터 유형
         colModel: colModel,								// 그리드 셀 리스트
@@ -51,6 +66,7 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
 		multiselectWidth:multiselectWidth,				// 최상단 Check Box 넓이값
         multiboxonly:multiboxonly,						// 다중 Row 선택 여부
         pager: "#" + defaultPager,
+        viewrecords: true,
         loadComplete:function(data) {
         	console.log("JQGRID LOAD COMPLETE =============> ");
         },
@@ -67,7 +83,15 @@ jgrid.createJqGrid = function(gridId, colModel, option) {
         	}
         },
         onSelectRow:function(rowid, status, e) {
-        	if(typeof(onSelectRow) === "function") {
+        	if(cellEdit) {											// 셀 편집 모드 일시
+        		lastSel = jgrid.popGridInfo(gridId, 'lastSel');
+        		if(rowid && rowid != lastSel){
+           			$("#" + gridId).jqGrid('restoreRow', lastSel);
+           			$("#" + gridId).jqGrid('editRow', rowid, true);
+           			jgrid.pushGridInfo(gridId, 'lastSel', rowid);
+        		}
+        	}
+       		if(typeof(onSelectRow) === "function") {
         		onSelectRow(rowid, status, e);
         	}
         }
@@ -105,6 +129,15 @@ jgrid.addRow = function(gridId, _rowData, _position, _editable, _cellNum) {
 	}
 	return id;
 };
+/**
+ * 마지막 열린 에디터 모드의 Row를 닫는다. 
+ */
+jgrid.closeLastEditRow = function(gridId) {
+	var lastSel = jgrid.popGridInfo(gridId, 'lastSel');
+	if(!jut.isEmpty(lastSel)) {
+		$("#" + gridId).jqGrid('restoreRow', lastSel);
+	}
+}
 /**
  * 그리드에 조회된 데이터를 세팅한다. 
  * gridId : 대상 그리드 아이디

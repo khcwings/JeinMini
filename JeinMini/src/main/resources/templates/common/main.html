@@ -4,59 +4,47 @@
 <meta charset="UTF-8" />
 <script type="text/javascript">
 	var codeManager = {	};
+	var gridGrp  = null;
+	var gridCode = null;
+	
+	var selectUseYn = [{ text: 'Yes', 	value: 'Y' }, { text: 'No', 	value: 'N' }];
 	
 	// 초기화 함수
 	codeManager.init = function() {
-		console.log("##### codeManager.init #####");
-		
-		// 버튼 바인딩
-		$("#addBtn").bind("click",  codeManager.addGrp);
-		$("#saveBtn").bind("click", codeManager.saveGrp);
-		$("#delBtn").bind("click",  codeManager.deleteGrp);
+		// 화면 바인딩
+		codeManager.bind();
 		
 		var colModelGrp = [
-			{ name: 'CODE_GRP_ID', 	label: '그룹 코드 아이디', 	width: 75, 		key:true,		formatter:codeManager.setCodeGrpLink },	// Grid의 Key 설정 필요
-            { name: 'CODE_GRP_NAME',label: '그룹 코드 이름', 	width: 150,		editable: true},
-            { name: 'CODE_DESC',	label: '그룹 코드 상세', 	width: 150,		editable: true},
-            { name: 'USE_YN',		label: '사용 여부', 		width: 150, 	editable: true, edittype:'select', formatter: 'select',  editoptions:{value:"Y:Yes;N:No"}},
-            { name: 'UPDATE_ID', 	label: '수정(생성) ID',		width: 150 },
-            { name: 'UPDATE_DT', 	label: '수정(생성) 시간',	align: 'center', formatter: 'date', formatoptions: {srcformat: 'Y-m-d', newformat: 'Y/m/d'}}
-        ];
-		var gridOptionGrp = {
-			height:200, 		// 그리드 옵션
-			rowNum:-1,			// ROW 무제한 노출
-			multiselect:true,	// CheckBox 활성화 여부
-			onSelectRow:codeManager.searchCode
-		}
-		// GRP 그리드 생성
-		jgrid.createJqGrid("jqGridGrp", colModelGrp, gridOptionGrp);
+			{name: 'GRP_LINK',			title: '그룹 코드 아이디',	align: 'center', 	formatter:codeManager.setCodeGrpLink}
+			, {name: 'CODE_GRP_NAME',	title: '그룹 코드 이름',	editOptions: {type: 'text',   maxLength: 30,  useViewMode: true}}
+			, {name: 'CODE_DESC',		title: '그룹 코드 상세',	editOptions: {type: 'text',   maxLength: 150, useViewMode: true}}
+			, {name: 'USE_YN',			title: '사용 여부',			align: 'center', 		editOptions: {type: 'select', listItems: selectUseYn, useViewMode: true}}
+			, {name: 'UPDATE_ID',		title: '수정(생성) ID',		align: 'center'}
+			, {name: 'UPDATE_DT',		title: '수정(생성) 시간',	align: 'center'}
+			, {name: 'CODE_GRP_ID',		title: '그룹 코드 아이디',	hidden: true}
+	    ];
 		
-		var colModelCode = [
-			{ name: 'CODE_ID', 		label: '코드 아이디', 		width: 75, 	 	 editable: true, key:true  },	// Grid의 Key 설정 필요
-            { name: 'CODE_NAME',	label: '코드 이름', 		width: 150, 	 editable: true },
-            { name: 'CODE_DESC',	label: '코드 상세', 		width: 150, 	 editable: true },
-            { name: 'ATTR_VALUE1',	label: '옵션 1', 			width: 150, 	 editable: true },
-            { name: 'ATTR_VALUE2',	label: '옵션 2', 			width: 150, 	 editable: true },
-            { name: 'ATTR_VALUE3',	label: '옵션 3', 			width: 150, 	 editable: true },
-            { name: 'USE_YN',		label: '사용 여부', 		width: 150, 	 editable: true, edittype:'select', formatter: 'select',  editoptions:{value:"Y:Yes;N:No"}},
-            { name: 'UPDATE_ID', 	label: '수정(생성) ID',		width: 150 },
-            { name: 'UPDATE_DT', 	label: '수정(생성) 시간',	align: 'center', formatter: 'date', formatoptions: {srcformat: 'Y-m-d', newformat: 'Y/m/d'}}
-        ];
-		
-		var gridOptionCode = {
-			height:200, 		// 그리드 옵션
-			rowNum:-1,			// ROW 무제한 노출
-			multiselect:true,	// CheckBox 활성화 여부
-			defaultPager:'jqGridCodeDefaultPager',
-			onSelectRow:codeManager.searchCode
-		}
-		// GRP 그리드 생성
-		jgrid.createJqGrid("jqGridCode", colModelCode, gridOptionCode); 
+		gridGrp = new tui.Grid({
+		    el: $('#gridGrp'),
+		    scrollX: false,
+		    scrollY: true,
+		    bodyHeight: 200,	// Grid 높이
+		    rowHeight: 35,		// Row 높이
+		    rowHeaders: ['checkbox'],
+		    columns: colModelGrp
+		});
+	};
+	// 화면 바인딩
+	codeManager.bind = function() {		
+		$("#addBtn1").bind("click",  codeManager.addGrp);
+		$("#saveBtn1").bind("click", codeManager.saveGrp);
+		$("#delBtn1").bind("click",  codeManager.deleteGrp);
 	};
 	
 	// Code Grp Click Link
-	codeManager.setCodeGrpLink = function(cellval, option, rowObject) {
-		return "<a href=\"javascript:void(0);\" onclick=\"codeManager.searchCode('" + $.trim(cellval) + "');\">" + $.trim(cellval) + "</a>"
+	codeManager.setCodeGrpLink = function(value, rowData) {
+		var codeGrpId = jut.isEmpty(rowData.CODE_GRP_ID)?"":rowData.CODE_GRP_ID;
+		return "<a href=\"javascript:void(0);\" onclick=\"codeManager.searchCode('" + codeGrpId + "');\">" + codeGrpId + "</a>";
 	};
 	
 	// 그룹 코드 검색 이벤트
@@ -69,65 +57,89 @@
 			, codeGrpName 	: $("#searGroupName").val()
 		}, codeManager.searchGrpCallback);
 	};
+	
 	// 그룹 코드 검색 콜백 이벤트
 	codeManager.searchGrpCallback = function(res, req) {
-		jgrid.setLocalData("jqGridGrp", res.codeList);
+		gridGrp.setData(res.codeList);
 	};
+	
 	// 그룹 코드 추가
 	codeManager.addGrp = function() {
-		jgrid.addRow("jqGridGrp", {USE_YN:'Y'}, null, true, 2);
+		gridGrp.prependRow({USE_YN:'Y'}, {focus:true});
+		gridGrp.check(gridGrp.getFocusedCell().rowKey);
 	};
-	// 그룹 코드 저장
-	codeManager.saveGrp = function() {
-		var chkItemList = $('#jqGridGrp').jqGrid('getGridParam', 'selarrrow'); // selrow selarrrow
-		if(chkItemList.length < 1) {
-			alert("선택된 아이템이 존재하지 않습니다.");
-			return;
-		}
-		
-		var itemList =[];
-		$.each(chkItemList, function(idx, obj) {
-			var rowData = $('#jqGridGrp').jqGrid('getRowData', obj);
-			console.log(rowData);
-			
-		});		
-	};
+	
 	// 그룹 코드 삭제
 	codeManager.deleteGrp = function() {
-		var chkItemList = $('#jqGridGrp').jqGrid('getGridParam', 'selarrrow'); // selrow selarrrow
+		var chkItemList = gridGrp.getCheckedRows();
 		if(chkItemList.length < 1) {
 			alert("선택된 아이템이 존재하지 않습니다.");
 			return;
 		}
 		
+		var newRowFlag = false;
 		var itemList =[];
 		$.each(chkItemList, function(idx, obj) {
-			itemList.push({codeGrpId : obj});
+			if(!newRowFlag && jut.isEmpty(obj.CODE_GRP_ID)) {
+				newRowFlag = true;
+				gridGrp.focus(obj.rowKey, 'CODE_GRP_NAME', true);
+			}
+			
+			itemList.push({codeGrpId : obj.CODE_GRP_ID});
 		});
+		
+		if(newRowFlag) {
+			alert("신규 아이템은 삭제할 수 없습니다. ");
+			return;
+		}
 		
 		jcm.doAjax(true, "[[ @{/admin/data/setCodeGrp} ]]", {
 			serviceType 	: 'D',
 			codeGrpIdList	: itemList
 		}, codeManager.setGrpCallback);
 	};
+	
+	// 그룹 코드 저장
+	codeManager.saveGrp = function() {
+		var chkItemList = gridGrp.getCheckedRows();
+		if(chkItemList.length < 1) {
+			alert("선택된 아이템이 존재하지 않습니다.");
+			return;
+		}
+		
+		var newRowFlag = false;
+		var itemList = new Array();
+		$.each(chkItemList, function(idx, obj) {
+			if(!newRowFlag && jut.isEmpty(obj.CODE_GRP_NAME)) {
+				newRowFlag = true;
+				gridGrp.focus(obj.rowKey, 'CODE_GRP_NAME', true);
+			}
+			var item = {
+				'CODE_GRP_ID' 		: jut.getString(obj.CODE_GRP_ID)
+				, 'CODE_GRP_NAME' 	: jut.getString(obj.CODE_GRP_NAME)
+				, 'CODE_DESC' 		: jut.getString(obj.CODE_DESC)
+				, 'USE_YN' 			: jut.getString(obj.USE_YN)
+			}	
+			itemList.push(item);
+		});	
+		
+		if(newRowFlag) {
+			alert("그룹 코드 이름은 필수입니다. ");
+			return;
+		}
+		
+		jcm.doAjax(true, "[[ @{/admin/data/setCodeGrp} ]]", {
+			serviceType 	: 'U',
+			codeGrpIdList	: itemList
+		}, codeManager.setGrpCallback);
+	};
+	
 	// 그룹 코드 저장/삭제 콜백
 	codeManager.setGrpCallback = function(res, req) {
 		alert(res.resultMsg);
 		codeManager.searchGrp();
 	};
-
-	// 코드 검색
-	codeManager.searchCode = function(codeGrpId) {
-		$("#labelGroup").html("<dt>Group Code : </dt><dd>" + codeGrpId + "</dd>");
-		jcm.doAjax(true, "[[ @{/admin/data/getCodeList} ]]",  {
-			codeLevel 		: '2'
-			, codeGrpId 	: codeGrpId
-		}, codeManager.searchCallback);
-	};
-	// 코드 검색 콜백 이벤트
-	codeManager.searchCallback = function(res, req) {
-		jgrid.setLocalData("jqGridCode", res.codeList);
-	};
+	
 	
 	$(document).ready(function() {
 		console.log("##### Code Manager Start #####");
@@ -166,27 +178,20 @@
 		</div>
 		<div class="box_type1">
 			<div class="btn_group">
-				<div class="btn type2"><a href="javascript:void(0);" id="addBtn"><span>Add</span></a></div>
-				<div class="btn type2"><a href="javascript:void(0);" id="delBtn"><span>Delete</span></a></div>
-				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn"><span>Save</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="addBtn1"><span>Add</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="delBtn1"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn1"><span>Save</span></a></div>
 			</div>
-			<div class="jqGridArea">
-				<table id="jqGridGrp"></table>
-	   			<div id="jqGridDefaultPager" class="d_none"></div>
-	   		</div>
-		</div>
+			<div id="gridGrp"></div>		
+		</div>	
 		<div class="box_type1">
 			<div class="btn_group">
-				<dl id="labelGroup" class="result"></dl>
-				<div class="btn type2"><a href="javascript:void(0);" id="addBtn"><span>Add</span></a></div>
-				<div class="btn type2"><a href="javascript:void(0);" id="delBtn"><span>Delete</span></a></div>
-				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn"><span>Save</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="addBtn2"><span>Add</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="delBtn2"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn2"><span>Save</span></a></div>
 			</div>
-			<div class="jqGridArea">
-				<table id="jqGridCode"></table>
-	   			<div id="jqGridCodeDefaultPager" class="d_none"></div>
-	   		</div>
-		</div>				
+			<div id="gridCode"></div>		
+		</div>		
 	</section>
 </body>
 </html>

@@ -53,6 +53,13 @@ jut.isEmpty = function(_obj){
 	}
 };
 
+jut.getString = function(_obj){
+	if(jut.isEmpty(_obj)) {
+		return "";
+	}
+	return _obj;
+}
+
 // 특정 html 문자열을 변환한다. 
 jut.htmlEscape = function(_obj) {
 	return _obj.replace(/&/g, '&amp;')
