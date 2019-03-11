@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout01}">
+<head>
+<meta charset="UTF-8">
+<title>SAMPLE 04</title>
+<script type="text/javascript" th:src="@{/js/common/jein-grid-1.0.0.js}"></script>
+<script type="text/javascript">
+$(function(){
+	
+	var codeGrpId = '';
+	var useYn = [{ text: 'Yes', value: 'Y' }, { text: 'No', value: 'N' }];
+	
+	
+	var jeinGrid1 = new JeinGrid();
+	jeinGrid1.create({
+		id : 'jeinGridTest1'
+		, columns : [
+			{name : 'CODE_GRP_ID', title: '그룹 코드 아이디', width:120, align: 'center'}
+			, {name : 'CODE_GRP_NAME', title : '그룹 코드 이름', editOptions : {type: 'text', maxLength : 30, useViewMode : true}}
+			, {name : 'CODE_DESC', title : '그룹 코드 상세', editOptions : {type: 'text',   maxLength : 150, useViewMode : true}}
+			, {name : 'USE_YN', title : '사용 여부', width : 100, align : 'center', 	editOptions : {type: 'select', listItems : useYn, useViewMode : true}}
+			, {name : 'UPDATE_ID', title : '수정(생성) ID', width:100, align : 'center'}
+			, {name : 'UPDATE_DT', title : '수정(생성) 시간', width:100, align : 'center'}
+		]
+		, rowCount : 10
+		, height : 300
+	})
+	.setAjaxData({
+		url : '[[ @{/admin/data/getCodeList} ]]'
+		, requestData : {
+			codeLevel		: '1'
+			, codeGrpId 	: $('#searGroupCode').val()
+			, codeGrpName 	: $('#searGroupName').val()
+		}
+		, dataKey : 'codeList'
+	})
+	.focusChangeRow(function(rowIndex, colName, prevRowIndex, prevColName){
+		codeGrpId = jeinGrid1.getCellData(rowIndex, 'CODE_GRP_ID');
+		$('#labelGroup').html('<dt>Group Code : </dt><dd>' + codeGrpId + '</dd>');
+		jeinGrid2.setAjaxData({
+			url : '[[ @{/admin/data/getCodeList} ]]'
+			, requestData : {
+				codeLevel 		: '2'
+				, codeGrpId 	: codeGrpId
+			}
+			, dataKey : 'codeList'
+		});
+	})
+	.setGridStyle({
+		cell: {
+            normal : {background : '#fbfbfb', border : '#e0e0e0'}
+			, head : {background : '#eee', border : '#ccc'}
+			, editable : {background : '#fbfbfb'}
+			, selectedHead : {background : '#d8d8d8'}
+			, focused : {border : '#418ed4'}
+			, disabled : {text : '#b0b0b0'}
+			, evenRow : {background : '#fbfbfb'}
+			, currentRow : {background : '#e0ffe0'}
+        }
+	})
+	;
+	
+	var jeinGrid2 = new JeinGrid();
+	jeinGrid2.create({
+		id : 'jeinGridTest2'
+		, columns : [
+			{name: 'CODE_ID',			title: '코드 아이디',		width:120, 		editOptions: {type: 'text',   maxLength: 10,  useViewMode: true}}
+			, {name: 'CODE_NAME',		title: '코드 이름',			minWidth:100,	editOptions: {type: 'text',   maxLength: 30,  useViewMode: true}}
+			, {name: 'CODE_DESC',		title: '코드 상세',			minWidth:150,	editOptions: {type: 'text',   maxLength: 150, useViewMode: true}}
+			, {name: 'DISPLAY_ORDER',	title: '순서',				editOptions: {type: 'text',   maxLength: 2,   useViewMode: true}}
+			, {name: 'ATTR_VALUE1',		title: '옵션 1',			editOptions: {type: 'text',   maxLength: 60,  useViewMode: true}}
+			, {name: 'ATTR_VALUE2',		title: '옵션 2',			editOptions: {type: 'text',   maxLength: 60,  useViewMode: true}}
+			, {name: 'ATTR_VALUE3',		title: '옵션 3',			editOptions: {type: 'text',   maxLength: 60,  useViewMode: true}}
+		]
+	});
+	jeinGrid2.addColumns([
+		{name: 'USE_YN',			title: '사용 여부',			width:100,	  align: 'center', 	editOptions: {type: 'select', listItems: useYn, useViewMode: true}}
+		, {name: 'UPDATE_ID',		title: '수정(생성) ID',		width:100,	  align: 'center'}
+		, {name: 'UPDATE_DT',		title: '수정(생성) 시간',	width:100,	  align: 'center'}
+	]);
+});
+</script>
+</head>
+<body>
+	<section layout:fragment="content">
+	
+		<div class="box_type1">
+			<div class="tbl_type1">
+				<table>
+					<colgroup>
+						<col style="width:;">
+						<col style="width:35%;">
+						<col style="width:;">
+						<col style="width:;">
+						<col style="width:10px;">
+					</colgroup>
+					<tr>
+						<th title="Group Code">Group Code</th>
+						<td><input type="text" id="searGroupCode" name="searGroupCode" /></td>
+						<th title="Group Name">Group Name</th>
+						<td><input type="text" id="searGroupName" name="searGroupName" /></td>
+						<td class="ar"><div class="btn type2"><a href="#" id="searchBtn"><span><em class="search"></em>Search</span></a></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="box_type1">
+			<div id="jeinGridTest1"></div>
+		</div>
+		
+		<div class="box_type1">
+			<div class="btn_group">
+				<dl id="labelGroup" class="result"></dl>
+				<div id="jeinGridTest2"></div>
+			</div>
+		</div>
+	
+	</section>
+</body>
+</html>

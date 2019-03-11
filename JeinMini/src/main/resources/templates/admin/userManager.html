@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout01}">
+<head>
+<meta charset="UTF-8" />
+<title th:text="${viewMenuName}">유저관리</title>
+<script type="text/javascript" th:src="@{/js/common/jein-grid-1.0.0.js}"></script>
+<script type="text/javascript">
+$(function(){
+	
+	var userGrid = new JeinGrid();
+	userGrid.create({
+		id : 'userGrid'
+		, rowHeaders: ['checkbox']
+		, focusDefault : false//헤더 선택시 default로 선택되는 행을 제거한다
+		, columns : [
+			{name : 'USER_ID', title: '아이디', width:140, align: 'center', editable: false, editOptions: {type: 'text', useViewMode: false}, onAfterChange: function(ev){
+                console.log(ev);//ev.instance.value
+            }}
+			, {name : 'USER_NAME', title: '사용자명', width:120, align: 'center', editable: true, editOptions: {type: 'text', useViewMode: false}}
+			, {name : 'USER_EMAIL', title: 'EMAIL', width:200, align: 'center', editable: true, editOptions: {type: 'text', useViewMode: false}}
+			, {name : 'USER_PHONE', title: '연락처', width:120, align: 'center', editable: true, editOptions: {type: 'text', useViewMode: false}, onAfterChange: function(ev){
+                console.log(ev);//ev.instance.value
+            }}
+			, {name : 'CREATE_ID', title: '생성자', width:120, align: 'center'}
+			, {name : 'CREATE_DT', title: '생성일', width:120, align: 'center', formatter: 'date'}
+			, {name : 'UPDATE_ID', title: '수정자', width:120, align: 'center'}
+			, {name : 'UPDATE_DT', title: '수정일', width:120, align: 'center', formatter: 'date'}
+			, {name : 'DELETE_YN', title: '삭제여부', width:160, align : 'center', editable: true, relations : [{
+					targetNames : ['USER_ID'], disabled : function(val){
+						return val === 'Y';
+					}
+				}], editOptions: {
+	                type: 'radio'
+	                , listItems : [
+	                    { text: '사용', value: 'N' }
+	                    , { text: '사용안함', value: 'Y' }
+	                ]
+					, useViewMode: true
+	            }
+			}
+			, {name : 'ROW_STATUS', title: '상태', width:120, hidden: true, relations : [{
+				targetNames : ['USER_ID']
+				, disabled : function(val){
+					return val === 'N';
+				} 
+			}]}
+		]
+		, height : 600
+		, scrollX : false
+	})
+	.setAjaxData({
+		url : '[[ @{/admin/data/getUserList} ]]'
+		, requestData : {
+			userId : $('#searchId').val()
+			, userName : $('#searchName').val()
+		}
+		, dataKey : 'userList'
+	});
+	
+	//검색
+	$('#searchBtn').on('click', function(){
+		userGrid.setAjaxData({
+			url : '[[ @{/admin/data/getUserList} ]]'
+			, requestData : {
+				userId : $('#searchId').val()
+				, userName : $('#searchName').val()
+			}
+			, dataKey : 'userList'
+		});
+	});
+	
+	//추가
+	$('#addBtn').on('click', function(){
+		userGrid.addRow(0, {DELETE_YN : 'N'});
+	});
+	
+	//삭제
+	$('#delBtn').on('click', function(){
+		//userGrid.removeCheckedRows();//체크된 행을 삭제 목록에 추가하고 화면에서 지운다
+		userGrid.setCheckedRowCellData('DELETE_YN', 'Y');//체크된 행의 셀 데이터를 일괄적으로 변경한다
+	});
+	
+	//저장
+	$('#saveBtn').on('click', function(){
+		
+		//변경된 데이터만 찾아온다. (생성 : C, 변경 : U, 삭제 : D)
+		var changedData = userGrid.getChangedIgnoreData(['CREATE_ID', 'CREATE_DT', 'UPDATE_ID', 'UPDATE_DT']);
+		
+		jcm.doAjax(true, "[[ @{/admin/data/setUser} ]]", {
+			gridData : changedData
+		}, function(response, request){
+			
+			if(response.resultCode === 'S'){
+				alert(response.resultMsg);
+				userGrid.setAjaxData({
+					url : '[[ @{/admin/data/getUserList} ]]'
+					, requestData : {
+						USER_ID : $('#searchId').val()
+						, USER_NAME : $('#searchName').val()
+					}
+					, dataKey : 'userList'
+				});
+			}
+			
+		});
+	});
+	
+});
+</script>
+</head>
+<body>
+	<section layout:fragment="content">
+		
+		<div class="box_type1">
+			<div class="tbl_type1">
+				<table>
+					<colgroup>
+						<col style="width:;">
+						<col style="width:35%;">
+						<col style="width:;">
+						<col style="width:;">
+						<col style="width:10px;">
+					</colgroup>
+					<tr>
+						<th title="ID">아이디</th>
+						<td><input type="text" id="searchId" /></td>
+						<th title="Name">이름</th>
+						<td><input type="text" id="searchName" /></td>
+						<td class="ar"><div class="btn type2"><a href="#" id="searchBtn"><span><em class="search"></em>Search</span></a></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div class="box_type1">
+			<div class="btn_group">
+				<div class="btn type2"><a href="javascript:void(0);" id="addBtn"><span>Add</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="delBtn"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn"><span>Save</span></a></div>
+			</div>
+		
+			<div id="userGrid"></div>
+		</div>
+		
+	</section>
+</body>
+</html>
