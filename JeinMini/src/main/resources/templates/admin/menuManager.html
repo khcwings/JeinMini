@@ -5,9 +5,12 @@
 <head>
 <meta charset="UTF-8" />
 <title th:text="${viewMenuName}">SAMPLE 03</title>
+<script type="text/javascript" th:src="@{/js/common/jein-grid-1.0.0.js}"></script>
+<script type="text/javascript" th:src="@{/js/common/jein-combobox-1.0.0.js}"></script>
+<script type="text/javascript" th:src="@{/js/common/jein-modal-1.0.0.js}"></script>
 <!-- request.getAttribute -->
 <script type="text/javascript">
-	$(document).ready(function() {
+	/* $(document).ready(function() {
 		console.log("################# SAMPLE 03 START #################");
 		jcm.setDatepicker("jquiDatepicker1");
 		jcm.setDatepicker("jquiDatepicker2");
@@ -35,12 +38,177 @@
 			target : 'Layer Open'
 		}, $("#popupWidth").val(), $("#popupHeight").val(), $("#popupTop")
 				.val(), $("#popupLeft").val());
-	}
+	} */
+	$(function(){
+		
+		//셀렉트박스 설정
+		//1. ajax 통신 후 바인딩 -> url 기입
+		//2. 데이터가 존재할때 직접 바인딩 -> data 기입
+		var combo = new JeinComboBox();
+		combo.create({
+			id : 'moduleList'
+			, url : '[[ @{/admin/data/getModuleList} ]]'
+			, dataKey : 'moduleList'
+			//, data : comboboxData
+			, defaultShow : true
+			, defaultValue : ''
+			, defaultLabel : '전체'
+			, labelKey : 'LABEL'
+			, valueKey : 'VALUE'
+			, requestData : {}
+		});
+		
+		//그리드 설정
+		var menuGrid = new JeinGrid();
+		menuGrid.create({
+			id : 'menuGrid'
+			, rowHeaders: ['checkbox']
+			, virtualScrolling: true
+			, focusDefault : false//헤더 선택시 default로 선택되는 행을 제거한다
+			, columns : [
+				{name : 'MODULE_ID', title: '모듈아이디', width:100, align: 'center', editable: false}
+				, {name : 'MODULE_NAME', title: '모듈명', width:90, align: 'center', editable: false}
+				, {name : 'UPPER_MENU_ID', title: '상위메뉴아이디', width:100, align: 'center', editable: false}
+				, {name : 'MENU_ID', title: '메뉴아이디', width:240, align: 'center', editable: false}
+				, {name : 'MENU_NAME', title: '메뉴명', width:140, align: 'left', editable: false}
+				, {name : 'DISPLAY_ORDER', title: '정렬순서', width:60, align: 'center', editable: false}
+				, {name : 'MENU_LEVEL', title: '메뉴레벨', width:60, align: 'center', editable: false}
+				, {name : 'MENU_TYPE', title: '메뉴타입', width:60, align: 'center', editable: false}
+				, {name : 'MENU_PATH', title: '메뉴경로', width:200, align: 'left', editable: false}
+				, {name : 'MENU_URL', title: '메뉴URL', width:200, align: 'left', editable: false}
+				, {name : 'LOGIN_YN', title: '로그인여부', width:60, align: 'center', editable: false}
+				, {name : 'USE_YN', title: '사용여부', width:60, align: 'center', editable: false}
+				, {name : 'CREATE_DT', title: '생성일', width:100, align: 'center', editable: false}
+				, {name : 'CREATE_ID', title: '생성자', width:100, align: 'center', editable: false}
+				, {name : 'UPDATE_DT', title: '수정일', width:100, align: 'center', editable: false}
+				, {name : 'UPDATE_ID', title: '수정자', width:100, align: 'center', editable: false}
+			]
+			, height : 600
+			, treeOptions : {
+				name : 'MENU_ID'
+				, useCascadingCheckbox: true
+			}
+		})
+		.setAjaxTreeData({
+			url : '[[ @{/admin/data/getMenuList} ]]'
+			, requestData : {}
+			, dataKey : 'menuList'
+			, sortKey : 'MENU_LEVEL'
+			, parentKey : 'MENU_ID'
+			, childrenKey : 'UPPER_MENU_ID'
+			, expand : false
+		});
+		
+		//검색
+		$('#searchBtn').on('click', function(){
+			menuGrid.setAjaxTreeData({
+				url : '[[ @{/admin/data/getMenuList} ]]'
+				, requestData : {
+					moduleId : $('#moduleList').val()
+					, menuId : $('#searchMenuId').val()
+					, menuPath : $('#searchMenuPath').val()
+					, menuName : $('#searchMenuName').val()
+					, menuType : $('#searchMenuType').val()
+				}
+				, dataKey : 'menuList'
+				, sortKey : 'MENU_LEVEL'
+				, parentKey : 'MENU_ID'
+				, childrenKey : 'UPPER_MENU_ID'
+			});
+		});
+		
+		//추가
+		var addModal = new JeinModal({
+			id : 'addModal'
+			, target : 'addBtn'
+			, url : '/common/popup/addMenu'
+			, data : {name : 'test'}
+			, header : true
+			, footer : true
+			, title : '메뉴 등록'
+			, okButton : {
+				className : ''
+				, label : '확인'
+				, callback : function(e){
+					console.log(e);
+				}
+			}
+			, cancelButton : {
+				className : ''
+				, label : '취소'
+				, callback : function(modal){
+					console.log(modal);
+					modal.hide();
+				}
+			}
+			, customButtons : [
+				{label : '저장', className : '', callback : function(modal){modal.hide()}}
+			]
+		});
+		
+	});
 </script>
 </head>
 <body>
+
 	<section layout:fragment="content">
-		<h2 th:text="${sampleTitle}">Thymeleaf Test Page</h2>
+	
+		<div class="box_type1">
+			<div class="tbl_type1">
+				<table>
+					<colgroup>
+						<col width="50px" />
+						<col width=";" />
+						<col width="50px" />
+						<col width=";" />
+						<col width="50px" />
+						<col width=";" />
+						<col width="50px" />
+						<col width=";" />
+					</colgroup>
+					<tr>
+						<th>모듈</th>
+						<td><select id="moduleList"></select></td>
+						<th>메뉴아이디</th>
+						<td><input type="text" id="searchMenuId" /></td>
+						<th>메뉴경로</th>
+						<td><input type="text" id="searchMenuPath" /></td>
+						<th>메뉴명</th>
+						<td><input type="text" id="searchMenuName" /></td>
+					</tr>
+					<tr>
+						<th>메뉴타입</th>
+						<td>
+							<select id="searchMenuType">
+								<option value="">전체</option>
+								<option value="VIEW">VIEW</option>
+								<option value="POPUP">POPUP</option>
+								<option value="COMMON">공통</option>
+							</select>
+						</td>
+						<th></th>
+						<td></td>
+						<th></th>
+						<td></td>
+						<th></th>
+						<td class="ar"><div class="btn type2"><a href="#" id="searchBtn"><span><em class="search"></em>Search</span></a></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div class="box_type1">
+			<div class="btn_group">
+				<div class="btn type2"><a href="javascript:void(0);" id="addBtn"><span>Add</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="delBtn"><span>Delete</span></a></div>
+				<div class="btn type2"><a href="javascript:void(0);" id="saveBtn"><span>Save</span></a></div>
+			</div>
+		
+			<div id="menuGrid"></div>
+		</div>
+	
+	
+		<!-- <h2 th:text="${sampleTitle}">Thymeleaf Test Page</h2>
 		<div style="border: 2px solid #3571B5;">
 			<h1>Thymeleaf Sample</h1>
 			<p>Html-text :</p>
@@ -53,7 +221,7 @@
 		</div>
 		<div style="border: 2px solid #3571B5;">
 			<h1>Login User Info</h1>
-			<!-- Session에 userInfo값이 null이 아닌 경우에만 그려짐 -->
+			Session에 userInfo값이 null이 아닌 경우에만 그려짐
 			<div th:if="${session.userInfo}!=null" th:object="${session.userInfo}" >			
 				<p>
 					USER ID : <span th:text="*{userId}"></span>
@@ -120,17 +288,20 @@
 			<form id="fileUpload" name="fileUpload" enctype="multipart/form-data">
 				<input type="hidden" name="uploadCallback"
 					value="callbackFileUpload" />
-				<!-- 콜백 함수 -->
+				콜백 함수
 				<input type="hidden" name="uploadPath" value="biz.jein" />
-				<!-- 실 저장 경로 -->
+				실 저장 경로
 				<input type="hidden" name="uploadPreFix" value="SAM" />
-				<!-- Pre Fix Name -->
+				Pre Fix Name
 				<input type="file" name="uploadFile" multiple
 					onchange="javascript:jcm.doAjaxFileForm('fileUpload', callbackSampleFileUpload);" />
 			</form>
 			<p>File Download List</p>
 			<div id="fileList"></div>
-		</div>
+		</div> -->
+		
+		
+		
 	</section>
 </body>
 </html>

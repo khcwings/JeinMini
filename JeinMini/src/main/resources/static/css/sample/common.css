@@ -361,6 +361,27 @@ table .blank {height:5px !important; padding:0 !important;}
 .popup.type2 {padding:14px 13px; border:1px solid #669fda; box-shadow:1px 1px 3px #cdcdcd; background-color:#fff;}
 .popup.type2 .head h2 {display:inline-block; height:auto; padding-top:0; padding-left:10px; margin-bottom:10px; padding-left: 18px; background:url(../../images/sample/title.png) 0 2px no-repeat; font: bold 16px/17px Arial, Candara, tahoma; color:#222;}
 .popup.type2 a.close {display:none;}
+.pop-header{
+	display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: end;
+    justify-content: left;
+    border-bottom: 1px solid #dee2e6;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-left:10px;
+    font-size: 1.2em;
+    font-weight: 900;
+}
+.pop-footer{
+	display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: end;
+    justify-content: center;
+    border-top: 1px solid #dee2e6;
+    -ms-flex-align: center;
+    align-items: center;
+}
 
 /***for window popup***/
 .pop_body .popup {border:none !important; border-radius:0;}

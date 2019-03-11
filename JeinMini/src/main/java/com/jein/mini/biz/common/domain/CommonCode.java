@@ -31,7 +31,8 @@ public class CommonCode {
 	private String codeName;
 	@Column(length=512)
 	private String codeDesc;
-	private int    codeLevel=1;
+	private int    codeLevel;
+	private int    displayOrder;
 	private char   useYn='N';
 	@Column(length=64)
 	private String attrValue1;

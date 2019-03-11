@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.jein.mini.common.dao.AdminMapper">
+	<!-- 공통 코드 리스트를 조회한다. -->
 	<select id="selectCodeList" parameterType="Map" resultType="Map">
 		SELECT 	CODE_GRP_ID, CODE_GRP_NAME, CODE_ID, CODE_NAME, CODE_DESC, CODE_LEVEL, USE_YN,
-				ATTR_VALUE1, ATTR_VALUE2, ATTR_VALUE3, 
+				DISPLAY_ORDER, ATTR_VALUE1, ATTR_VALUE2, ATTR_VALUE3, 
 		        CREATE_ID, DATE_FORMAT(CREATE_DT, '%Y-%m-%d') AS CREATE_DT, 
 		        COALESCE(UPDATE_ID, CREATE_ID) AS UPDATE_ID, DATE_FORMAT(COALESCE(UPDATE_DT, CREATE_DT), '%Y-%m-%d') AS UPDATE_DT
 		FROM	CM_CODE
@@ -17,5 +18,95 @@
 					AND CODE_GRP_NAME 	LIKE CONCAT('%', #{codeGrpName}, '%')
 				</if>
 		ORDER BY CODE_GRP_ID ASC
+	</select>
+	
+	<!-- 공통 코드의 다음 그룹코드 아이디값을 조회한다. -->
+	<select id="selectNextCodeGrpId" resultType="String">
+		SELECT  CONCAT('GRP', SUBSTR(CONCAT(CAST(SUBSTR(MAX(CODE_GRP_ID), 4, 5)AS UNSIGNED) + 100000), 2, 5)) AS NEXT_CODE_GRP_ID
+		FROM	CM_CODE
+		WHERE	CODE_LEVEL = '1'
+	</select>
+	
+	<!-- 유저 리스트를 조회한다. -->
+	<select id="selectUserList" parameterType = "Map" resultType="Map">
+		SELECT
+			USER_ID
+			, USER_NAME
+			, USER_PHONE
+			, USER_EMAIL
+			, DATE_FORMAT(CREATE_DT, '%Y-%m-%d') AS CREATE_DT
+			, CREATE_ID
+			, DATE_FORMAT(UPDATE_DT, '%Y-%m-%d') AS UPDATE_DT
+			, UPDATE_ID
+			, DELETE_YN
+			, 'N' AS ROW_STATUS 
+			<!-- , USER_PWD -->
+		FROM
+			CM_USER
+		WHERE
+			1=1
+			<if test="userId != '' and userId != null">
+				AND USER_ID LIKE CONCAT('%', #{userId}, '%')
+			</if>
+			<if test="userName != '' and userName != null">
+				AND USER_NAME LIKE CONCAT('%', #{userName}, '%')
+			</if>
+	</select>
+	
+	<!-- 모듈 리스트 조회 -->
+	<select id="selectModuleList" parameterType="Map" resultType="Map">
+		SELECT
+			MODULE_ID AS VALUE
+		    , MODULE_NAME AS LABEL
+		FROM
+			CM_MODULE
+		WHERE
+			USE_YN = 'Y'
+		ORDER BY
+			DISPLAY_ORDER ASC
+	</select>
+	
+	<!-- 메뉴 리스트 조회 -->
+	<select id="selectMenuList" parameterType="Map" resultType="Map">
+		SELECT
+			CM.MODULE_ID
+			, CO.MODULE_NAME
+			, CM.UPPER_MENU_ID
+			, CM.MENU_ID
+			, CM.MENU_NAME
+			, CM.DISPLAY_ORDER
+			, CM.MENU_LEVEL
+			, CM.MENU_TYPE
+			, CM.MENU_PATH
+			, CM.MENU_URL
+			, CM.LOGIN_YN
+			, CM.USE_YN
+			, DATE_FORMAT(CM.CREATE_DT, '%Y-%m-%d') AS CREATE_DT
+			, CM.CREATE_ID
+			, DATE_FORMAT(CM.UPDATE_DT, '%Y-%m-%d') AS UPDATE_DT
+			, CM.UPDATE_ID
+		FROM
+			CM_MENU CM
+		INNER JOIN
+			CM_MODULE CO
+		ON
+			CM.MODULE_ID = CO.MODULE_ID
+		WHERE
+			1=1
+			<if test="moduleId != '' and moduleId != null">
+				AND CM.MODULE_ID LIKE CONCAT('%', #{moduleId}, '%')
+			</if>
+			<if test="menuId != '' and menuId != null">
+				AND CM.MENU_ID LIKE CONCAT('%', #{menuId}, '%')
+			</if>
+			<if test="menuPath != '' and menuPath != null">
+				AND CM.MENU_PATH LIKE CONCAT('%', #{menuPath}, '%')
+			</if>
+			<if test="menuName != '' and menuName != null">
+				AND CM.MENU_NAME LIKE CONCAT('%', #{menuName}, '%')
+			</if>
+			<if test="menuType != '' and menuType != null">
+				AND CM.MENU_TYPE LIKE CONCAT('%', #{menuType}, '%')
+			</if>
 	</select>
 </mapper>

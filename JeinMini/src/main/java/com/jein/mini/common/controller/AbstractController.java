@@ -17,6 +17,19 @@ public class AbstractController {
 	}
 	
 	/**
+	 * 세션에서 User ID를 가져온다. 
+	 * @param session
+	 * @return
+	 */
+	protected String getUserId(HttpSession session) {
+		CommonUser user = (CommonUser)session.getAttribute(SessionConstant.SESSION_USER_INFO_KEY);
+		if(user != null) {
+			return user.getUserId();
+		}
+		return "";
+	}
+	
+	/**
 	 * 결과값을 Map에 저장하여 리턴한다. 
 	 * 
 	 * @param retMap

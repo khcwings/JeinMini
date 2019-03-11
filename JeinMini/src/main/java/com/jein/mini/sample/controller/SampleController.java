@@ -62,6 +62,12 @@ public class SampleController {
 		model.addAttribute("footerInfo", "[샘플-Controller]Sample Footer Test");
 	}
 	
+	@GetMapping("/view/sample04")
+	public void getViewSample04(Model model, @RequestParam Map<String, Object> param) {
+		log.info("###### Sample 04 : VIEW START ######");
+		log.info(param.toString());
+	}
+	
 	@GetMapping("/view/layout01")
 	public void getViewLayout01(Model model, @RequestParam Map<String, Object> param) {
 		log.info("###### Layout 02 : VIEW START ######");

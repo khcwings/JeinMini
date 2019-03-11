@@ -46,7 +46,10 @@ jut.isObj = function(_obj){
  * Object가 빈 값인지 판단
  */
 jut.isEmpty = function(_obj){
-	if( jut.isUndefined(_obj) || jut.isNull(_obj) || _obj == "" ){
+	//2019-02-26 cjopark
+	//: _obj가 boolean 타입일 경우 공백 equal 비교시 정확한 결과를 얻을 수 없어 type-equal 비교로 변경하였음
+	//if( jut.isUndefined(_obj) || jut.isNull(_obj) || _obj == "" ){
+	if( jut.isUndefined(_obj) || jut.isNull(_obj) || _obj === "" ){
 		return true;
 	}else{
 		return false;
@@ -57,7 +60,7 @@ jut.getString = function(_obj){
 	if(jut.isEmpty(_obj)) {
 		return "";
 	}
-	return _obj;
+	return $.trim(_obj);
 }
 
 // 특정 html 문자열을 변환한다. 
@@ -261,4 +264,43 @@ jut.daysBetween = function(_val1 , _val2) {
 	var to_dt   = new Date(_val2.substring(0, 4), parseInt(_val2.substring(4, 6) - 1), _val2.substring(6, 8));
 
 	return ((to_dt.getTime() - from_dt.getTime()) / 1000 / 60 / 60 / 24);
+};
+
+/**
+ * 객체 Deep Copy를 한다.
+ * @param	obj			깊은복사할 대상 객체
+ * @return	{Object}	복사된 객체
+ */
+jut.copy = function(obj){
+	if(obj === null || typeof(obj) !== 'object') return obj;
+	var clone = obj.constructor();
+	for(var attr in obj){
+		if(obj.hasOwnProperty(attr)){
+			clone[attr] = jut.copy(obj[attr]);
+		}
+	}
+	return clone;
+};
+
+/**
+ * 객체배열에서 key에 해당하는 중복데이터를 제거한다
+ */
+jut.duplicate = function(arr, key){
+	var values = {};
+    return arr.filter(function(item){
+        var val = item[key];
+        var exists = values[val];
+        values[val] = true;
+        return !exists;
+    });
+};
+
+/**
+ * 객체배열에서 key에 해당하는 값을 기준으로 오름차순 정렬 한다
+ */
+jut.ascendingSort = function(arr, key){
+	var resultTmp = jut.copy(arr);
+	return resultTmp.sort(function(before, after){
+		return before[key] < after[key] ? -1 : before[key] > after[key] ? 1 : 0;
+	});
 };

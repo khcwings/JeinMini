@@ -12,4 +12,9 @@ public interface CommonCodeRepository extends CrudRepository<CommonCode, Long>{
 	@Modifying
 	@Query(value="delete from cm_code where code_grp_id = ?1", nativeQuery=true)
 	public void deleteCodeGrpId(String codeGrpId);
+	
+	@Transactional
+	@Modifying
+	@Query(value="delete from cm_code where code_grp_id = ?1 and code_id = ?2", nativeQuery=true)
+	public void deleteCodeId(String codeGrpId, String codeId);
 }
