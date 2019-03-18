@@ -1,5 +1,6 @@
 'use strict';
 var JeinGridFactory = (function(){
+	var grids = [];
 	return{
 		getDefaultOptions : function(){
 			return {
@@ -10,6 +11,19 @@ var JeinGridFactory = (function(){
 				, header : []
 				, columns : []
 			}
+		}
+		, addGrid : function(id, grid){
+			grids.push({id : id, grid : grid});
+		}
+		, getGrid : function(id){
+			var grid = null;
+			for(var i=0; i<grids.length; i++){
+				if(grids[i].id === id){
+					grid = grids[i].grid;
+					break;
+				}
+			}
+			return grid;
 		}
 	};
 })();
@@ -28,6 +42,8 @@ function JeinGrid(){
 	
 	this.prevRowIndex = null;
 	this.prevColumnName = null;
+	
+	this.columns = null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +74,7 @@ JeinGrid.prototype.create = function(opt){
 	if(!jut.isEmpty(opt.header))		options.header = opt.header;
 	if(!jut.isEmpty(opt.pagination))	options.pagination = opt.pagination;
 	if(!jut.isEmpty(opt.columns))		options.columns = opt.columns;
+	this.columns = jut.copy(opt.columns);
 	if(!jut.isEmpty(opt.height))		options.bodyHeight = opt.height;
 	if(!jut.isEmpty(opt.virtualScrolling))		options.virtualScrolling = opt.virtualScrolling;
 	if(!jut.isEmpty(opt.treeOptions))		options.treeColumnOptions = opt.treeOptions;
@@ -76,6 +93,9 @@ JeinGrid.prototype.create = function(opt){
 			if(ev.targetType === 'columnHead') ev.stop();
 		});
 	}
+	
+	//팩토리에 그리드를 추가한다
+	JeinGridFactory.addGrid(opt.id, this);
 	
 	//객체를 반환한다
 	return this;
@@ -194,7 +214,7 @@ JeinGrid.prototype.focusChangeRow = function(callback){
 			that.prevColumnName = ev.columnName;
 		}
 	});
-	return this;v
+	return this;
 };
 
 /**
@@ -223,14 +243,77 @@ JeinGrid.prototype.addRow = function(index, defaultData){
 			for(var key in defaultData){
 				if(key === cols[i].name){
 					header[cols[i].name] = defaultData[key];
-				}else{
-					header[cols[i].name] = '';
 				}
 			}
 		}
 	}
 	
 	this.getGrid().appendRow(header, {at : index});
+	return this;
+};
+
+JeinGrid.prototype.addTreeRow = function(opt){
+	
+	var parentKey	= (jut.isEmpty(opt.parentKey)) ? '' : opt.parentKey;
+	var childrenKey	= (jut.isEmpty(opt.childrenKey)) ? '' : opt.childrenKey;
+	var data		= (jut.isEmpty(opt.data)) ? null : opt.data;
+	var expand		= (jut.isEmpty(opt.expand)) ? false : opt.expand;
+	var success		= (jut.isEmpty(opt.success)) ? null : opt.success;
+	var fail		= (jut.isEmpty(opt.fail)) ? null : opt.fail;
+	
+	if(!jut.isEmpty(parentKey) && !jut.isEmpty(childrenKey) && !jut.isEmpty(data)){
+		
+		//unique 옵션이 추가되었는지 체크
+		var uniqueFlag = (jut.isEmpty(opt.unique) || jut.isEmpty(opt.unique.length) || opt.unique.lenght === 0) ? false : true;
+		var uniqueCheck = false, uniqueCheckCol = '';
+		if(uniqueFlag){
+			var currentCol = '', uniqueList = opt.unique;
+			var colDatas = [];
+			//파라미터로 넘어온 유니크 대상 컬럼
+			for(var i=0; i<uniqueList.length; i++){
+				//i번째 유니크 컬럼
+				currentCol = uniqueList[i];
+				//i번째 유니크 컬럼명에 대한 모든 테이블 데이터
+				colDatas = this.getGrid().getColumnValues(currentCol, false);
+				//모든 테이블 데이터로 루프시작
+				for(var j=0; j<colDatas.length; j++){
+					if(colDatas[j] === data[currentCol]){
+						uniqueCheckCol = currentCol;
+						uniqueCheck = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(uniqueCheck){
+			var colIndex = this.getGrid().getIndexOfColumn(uniqueCheckCol);
+			var columns = this.columns;
+			var title = columns[colIndex].title;
+			
+			fail(uniqueCheckCol, title);
+		}else{
+//			var allData = this.getData();
+//			allData.push(data);
+//			this.setTreeData(allData, {
+//				parentKey : parentKey
+//				, childrenKey : childrenKey
+//				, expand : expand
+//			});
+			var allData = this.getData();
+			var parentRowKey = 0;
+			for(var i=0; i<allData.length; i++){
+				if(allData[i][parentKey] === data[childrenKey]){
+					this.getGrid().appendRow([data], {parentRowKey : allData[i].rowKey});
+					break;
+				}
+			}
+			success();
+		}
+		
+		
+		
+	}
 	return this;
 };
 

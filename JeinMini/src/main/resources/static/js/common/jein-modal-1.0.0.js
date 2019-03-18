@@ -48,9 +48,12 @@ function JeinModal(options){
 	this.okBtn		= (jut.isEmpty(options.okButton)) ? null : options.okButton;
 	this.cancelBtn	= (jut.isEmpty(options.cancelButton)) ? null : options.cancelButton;
 	this.customBtn	= (jut.isEmpty(options.customButtons)) ? null : options.customButtons;
+	this.drag		= (jut.isEmpty(options.drag)) ? false : options.drag;
+	
+	this.isLoaded	= false;
 	
 	this.getData = function(){
-		return this.data;
+		return data;
 	};
 	this.getModal = function(){
 		return modal;
@@ -74,83 +77,7 @@ function JeinModal(options){
 	
 	var that = this;
 	this.url = jcm.contentPath + this.url;
-	JeinModalFactory.removeModal(this.id);
-	$('#' + that.id).remove();
-	
-	var modalParent = document.createElement('div');
-	modalParent.id = this.id;
-	modalParent.className = 'dim-layer';
-	
-	var modalBackground = document.createElement('div');
-	modalBackground.className = 'dimBg';
-	modalBackground.addEventListener('click', function(e){
-		e.stopPropagation();
-		that.hide();
-	});
-	modalParent.appendChild(modalBackground);
-	
-	var modalLayer = document.createElement('div');
-	modalLayer.className = 'pop-layer';
-	modalLayer.style.width = this.width + 'px';
-	modalLayer.style.height = this.height + 'px';
-	//헤더
-	var popHeader = document.createElement('div');
-	popHeader.className = 'pop-header';
-	popHeader.style.height = '50px';
-	popHeader.innerText = (jut.isEmpty(this.title)) ? '' : this.title;
-	//바디
-	var popBody = document.createElement('div');
-	popBody.className = 'pop-body';
-	popBody.style.height = this.bodyHeight + 'px';
-	//푸터
-	var popFooter = document.createElement('div');
-	popFooter.className = 'pop-footer';
-	popFooter.style.height = '50px';
-	//확인버튼
-	if(this.okBtnFlag){
-		var okButton = document.createElement('button');
-		okButton.innerText = (jut.isEmpty(this.okBtn.label)) ? 'Ok' : this.okBtn.label;
-		okButton.className = (jut.isEmpty(this.okBtn.className)) ? 'ui-button ui-corner-all ui-widget' : this.okBtn.className;
-		okButton.addEventListener('click', function(e){
-			if(!jut.isEmpty(that.okBtn.callback)) that.okBtn.callback(that);
-		});
-		popFooter.appendChild(okButton);
-	}
-	//취소버튼
-	if(this.cancelBtnFlag){
-		var cancelButton = document.createElement('button');
-		cancelButton.innerText = (jut.isEmpty(this.cancelBtn.label)) ? 'Cancel' : this.cancelBtn.label;
-		cancelButton.className = (jut.isEmpty(this.cancelBtn.className)) ? 'ui-button ui-corner-all ui-widget' : this.cancelBtn.className;
-		cancelButton.addEventListener('click', function(e){
-			if(!jut.isEmpty(that.cancelBtn.callback)) that.cancelBtn.callback(that);
-		});
-		popFooter.appendChild(cancelButton);
-	}
-	//커스텀버튼
-	if(!jut.isEmpty(this.customBtn) && !jut.isEmpty(this.customBtn.length)){
-		for(var i=0; i<this.customBtn.length; i++){
-			var currentCustomButton = document.createElement('button');
-			currentCustomButton.innerText = (jut.isEmpty(this.customBtn[i].label)) ? '' : this.customBtn[i].label;
-			currentCustomButton.className = (jut.isEmpty(this.customBtn[i].className)) ? 'ui-button ui-corner-all ui-widget' : this.customBtn[i].className;
-			currentCustomButton.setAttribute('data-index', i);
-			currentCustomButton.addEventListener('click', function(e){
-				if(!jut.isEmpty(that.customBtn[e.target.getAttribute('data-index') * 1].callback)){
-					that.customBtn[e.target.getAttribute('data-index') * 1].callback(that);
-				}
-			});
-			popFooter.appendChild(currentCustomButton);
-		}
-	}
-	
-	modalLayer.appendChild(popHeader);
-	modalLayer.appendChild(popBody);
-	modalLayer.appendChild(popFooter);
-	modalParent.appendChild(modalLayer);
-	
-	//dom을 jquery object로 파싱
-	modal = $(modalParent);
-	JeinModalFactory.addModal(this, this.id);
-	
+
 	//target에 이벤트를 부여한다
 	$('#' + that.target).on('click', function(){
 		that.show();
@@ -160,25 +87,177 @@ function JeinModal(options){
  * 모달을 표시한다
  */
 JeinModal.prototype.show = function(){
-	console.log('show');
 	if(!this.isShow){
 		var that = this;
-		$('body', top.document).append(that.getModal());
-		$("#" + that.id + " .pop-body").load(that.url, {}, function(response, status, xhr) {
+//		var modalParent = document.createElement('div');
+//		modalParent.id = this.id;
+//		modalParent.className = 'dim-layer';
+		var modalParent = $('<div id="' + that.id + '"></div>');
+		modalParent.addClass('dim-layer');
+		
+//		var modalBackground = document.createElement('div');
+//		modalBackground.className = 'dimBg';
+//		modalBackground.addEventListener('click', function(e){
+//			e.stopPropagation();
+//			that.hide();
+//		});
+//		modalParent.appendChild(modalBackground);
+		var modalBackground = $('<div></div>');
+		modalBackground.addClass('dimBg');
+		modalBackground.on('click', function(e){
+			e.stopPropagation();
+			that.hide();
+		});
+		modalParent.append(modalBackground);
+		
+//		var modalLayer = document.createElement('div');
+//		modalLayer.className = 'pop-layer';
+//		modalLayer.style.width = this.width + 'px';
+//		modalLayer.style.height = this.height + 'px';
+		var modalLayer = $('<div></div>');
+		modalLayer.addClass('pop-layer');
+		modalLayer.width(that.width + 'px');
+		modalLayer.height(that.height + 'px');
+		//modalLayer.css(that.getPosition(that.id));
+		
+		
+		//헤더
+//		var popHeader = document.createElement('div');
+//		popHeader.className = 'pop-header';
+//		popHeader.style.height = '50px';
+//		popHeader.innerText = (jut.isEmpty(this.title)) ? '' : this.title;
+		var popHeader = $('<div></div>');
+		popHeader.addClass('pop-header');
+		popHeader.height('50px');
+		popHeader.text((jut.isEmpty(that.title)) ? '' : that.title);
+		
+		//바디
+//		var popBody = document.createElement('div');
+//		popBody.className = 'pop-body';
+//		popBody.style.height = this.bodyHeight + 'px';
+		var popBody = $('<div></div>');
+		popBody.addClass('pop-body');
+		popBody.height(that.bodyHeight + 'px');
+		
+		//푸터
+//		var popFooter = document.createElement('div');
+//		popFooter.className = 'pop-footer';
+//		popFooter.style.height = '50px';
+		var popFooter = $('<div></div>');
+		popFooter.addClass('pop-footer');
+		popFooter.height('50px');
+		
+		//확인버튼
+		if(this.okBtnFlag){
+//			var okButton = document.createElement('button');
+//			okButton.innerText = (jut.isEmpty(this.okBtn.label)) ? 'Ok' : this.okBtn.label;
+//			okButton.className = (jut.isEmpty(this.okBtn.className)) ? 'ui-button ui-corner-all ui-widget' : this.okBtn.className;
+//			okButton.removeEventListener('click', function(){});
+//			okButton.addEventListener('click', function(e){
+//				if(!jut.isEmpty(that.okBtn.callback)) that.okBtn.callback(that);
+//			});
+//			popFooter.appendChild(okButton);
+			var okButton = $('<button></button>');
+			okButton.text((jut.isEmpty(that.okBtn.label)) ? 'Ok' : that.okBtn.label);
+			okButton.className((jut.isEmpty(that.okBtn.className)) ? 'ui-button ui-corner-all ui-widget' : that.okBtn.className);
+			okButton.on('click', function(){
+				if(!jut.isEmpty(that.okBtn.callback)) that.okBtn.callback(that);
+			});
+			popFooter.append(okButton);
+		}
+		//취소버튼
+		if(this.cancelBtnFlag){
+//			var cancelButton = document.createElement('button');
+//			cancelButton.innerText = (jut.isEmpty(this.cancelBtn.label)) ? 'Cancel' : this.cancelBtn.label;
+//			cancelButton.className = (jut.isEmpty(this.cancelBtn.className)) ? 'ui-button ui-corner-all ui-widget' : this.cancelBtn.className;
+//			cancelButton.removeEventListener('click', function(){});
+//			cancelButton.addEventListener('click', function(e){
+//				if(!jut.isEmpty(that.cancelBtn.callback)) that.cancelBtn.callback(that);
+//			});
+//			popFooter.appendChild(cancelButton);
+			var cancelButton = $('<button></button>');
+			cancelButton.text((jut.isEmpty(that.cancelBtn.label)) ? 'Cancel' : that.cancelBtn.label);
+			cancelButton.addClass((jut.isEmpty(that.cancelBtn.className)) ? 'ui-button ui-corner-all ui-widget' : that.cancelBtn.className);
+			cancelButton.on('click', function(){
+				if(!jut.isEmpty(that.cancelBtn.callback)) that.cancelBtn.callback(that);
+			});
+			popFooter.append(cancelButton);
+		}
+		//커스텀버튼
+		if(!jut.isEmpty(that.customBtn) && !jut.isEmpty(that.customBtn.length)){
+			for(var i=0; i<that.customBtn.length; i++){
+//				var currentCustomButton = document.createElement('button');
+//				currentCustomButton.id = (jut.isEmpty(this.customBtn[i].id)) ? '' : this.customBtn[i].id;
+//				currentCustomButton.innerText = (jut.isEmpty(this.customBtn[i].label)) ? '' : this.customBtn[i].label;
+//				currentCustomButton.className = (jut.isEmpty(this.customBtn[i].className)) ? 'ui-button ui-corner-all ui-widget' : this.customBtn[i].className;
+//				currentCustomButton.setAttribute('data-index', i);
+//				currentCustomButton.removeEventListener('click', function(){});
+//				currentCustomButton.addEventListener('click', function(e){
+//					if(!jut.isEmpty(that.customBtn[e.target.getAttribute('data-index') * 1].callback)){
+//						that.customBtn[e.target.getAttribute('data-index') * 1].callback(that);
+//					}
+//				});
+//				popFooter.appendChild(currentCustomButton);
+				var currentCustomButton = $('<div></div>');
+				currentCustomButton.attr('id', (jut.isEmpty(that.customBtn[i].id)) ? '' : that.customBtn[i].id);
+				currentCustomButton.text((jut.isEmpty(that.customBtn[i].label)) ? '' : that.customBtn[i].label);
+				currentCustomButton.addClass((jut.isEmpty(that.customBtn[i].className)) ? 'ui-button ui-corner-all ui-widget' : that.customBtn[i].className);
+				currentCustomButton.attr('data-index', i);
+				currentCustomButton.on('click', function(e){
+					if(!jut.isEmpty(that.customBtn[e.target.getAttribute('data-index') * 1].callback)){
+						that.customBtn[e.target.getAttribute('data-index') * 1].callback(that);
+					}
+				});
+				popFooter.append(currentCustomButton);
+			}
+		}
+		
+//		modalLayer.appendChild(popHeader);
+//		modalLayer.appendChild(popBody);
+//		modalLayer.appendChild(popFooter);
+//		modalParent.appendChild(modalLayer);
+		modalLayer.append(popHeader);
+		modalLayer.append(popBody);
+		modalLayer.append(popFooter);
+		modalParent.append(modalLayer);
+		
+		//dom을 jquery object로 파싱
+		//modal = $(modalParent);
+//		JeinModalFactory.addModal(this, this.id);
+		
+		
+		//target에 이벤트를 부여한다
+//		$('#' + that.target).on('click', function(){
+//			that.show();
+//		});
+//		
+		
+		
+		
+		
+		
+		
+//		var that = this;
+//		$('body', top.document).append(that.getModal());
+		$('body', top.document).append(modalParent);
+		
+        $("#" + that.id + " .pop-layer").css(that.getPosition(that.id));
+        if(that.drag) $("#" + that.id + ' .pop-layer').draggable();
+        
+        //이전에 로드된 이력이 있다면 show만 한다(두번째 모달 생성부터 페이지가 두번 로드되는 버그 있음)
+        $("#" + that.id + " .pop-body").empty();
+		$('#modalBodyContainer').remove();
+		var popContainer = $('<div id="modalBodyContainer"></div>')
+		popContainer.load(that.url, {}, function(response, status, xhr) {
 			if(status === 'success') {
-				
-				var popupWidth  = $("#" + that.id + ' .pop-layer').outerWidth();
-				var popupHeight = $("#" + that.id + ' .pop-layer').outerHeight();
-	            $("#" + that.id + " .pop-layer").css({
-	                marginTop: (popupHeight / 2) * -1
-	                , marginLeft: (popupWidth / 2) * -1
-	                , position : 'absolute'
-	            });
-	            
 	            $("#" + that.id).show(jcm.constant.popup_effect, {}, jcm.constant.popup_effect_time, function() {});
 	            that.isShow = true;
+	            that.isLoaded = true;
 			}				
 		});
+		$("#" + that.id + " .pop-body").append(popContainer);
+		
+		JeinModalFactory.addModal(that, that.id);
 	}
 	return this;
 };
@@ -188,12 +267,23 @@ JeinModal.prototype.show = function(){
 JeinModal.prototype.hide = function(){
 	if(this.isShow){
 		var that = this;
-		$("#" + that.id).hide(jcm.constant.popup_effect, {}, jcm.constant.popup_effect_time, function() {
+		$("#" + that.id).stop().hide(jcm.constant.popup_effect, {}, jcm.constant.popup_effect_time, function() {
 			$("#" + that.id).remove();
-			that.isShow = false;
+			JeinModalFactory.removeModal(that.id);
 		});
+		
+		that.isShow = false;
 	}
 	return this;
+};
+JeinModal.prototype.getPosition = function(id){
+	var popupWidth  = $('#' + id + ' .pop-layer').outerWidth();
+	var popupHeight = $('#' + id + ' .pop-layer').outerHeight();
+	return {
+		marginTop: (popupHeight / 2) * -1
+        , marginLeft: (popupWidth / 2) * -1
+        , position : 'absolute'
+	};
 };
 /**
  * 모달을 표시하거나 숨김처리한 뒤 동기처리 콜백을 수행한다
@@ -214,4 +304,12 @@ JeinModal.prototype.isShow = function(){
 JeinModal.prototype.broadcast = function(id){
 	var broadModal = JeinModalFactory.getModal(id);
 	return broadModal.getData();
+};
+/**
+ * 바인딩된 버튼에 이벤트를 재정의 한다
+ */
+JeinModal.prototype.setButtonEvent = function(id, callback){
+	$('#' + id).on('click', function(e){
+		callback(e);
+	});
 };

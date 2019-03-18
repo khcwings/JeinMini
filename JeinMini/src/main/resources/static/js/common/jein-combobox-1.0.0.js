@@ -4,13 +4,16 @@
  * @returns
  */
 function JeinComboBox(){
+	this.id = '';
 	this.labelKey;
 	this.valueKey;
 	this.defaultShow = false;
 	this.defaultValue = '';
 	this.defaultLabel = '선택';
 }
-
+JeinComboBox.prototype.isInit = function(){
+	return (jut.isEmpty(this.id)) ? false : true;
+};
 /**
  * 셀렉트박스에 옵션목록을 그린다
  */
@@ -20,7 +23,7 @@ JeinComboBox.prototype.draw = function(data, targetId){
 	var option;
 	
 	//셀렉트박스를 초기화한다
-	target.innerHtml = '';
+	$(target).empty();
 	
 	if(this.defaultShow){
 		option = document.createElement('option');
@@ -29,12 +32,15 @@ JeinComboBox.prototype.draw = function(data, targetId){
 		target.appendChild(option);
 	}
 	
-	for(var i=0; i<data.length; i++){
-		option = document.createElement('option');
-		option.value = data[i][this.valueKey];
-		option.innerText = data[i][this.labelKey];
-		target.appendChild(option);
+	if(!jut.isEmpty(target)){
+		for(var i=0; i<data.length; i++){
+			option = document.createElement('option');
+			option.value = data[i][this.valueKey];
+			option.innerText = data[i][this.labelKey];
+			target.appendChild(option);
+		}
 	}
+	
 	
 	return this;
 };
@@ -42,10 +48,9 @@ JeinComboBox.prototype.draw = function(data, targetId){
  * 셀렉트박스에 그릴 데이터를 바인딩한다
  */
 JeinComboBox.prototype.create = function(opt){
+	
 	var that = this, target, dataList, req;
-	if(jut.isEmpty(opt.labelKey)){
-		
-	}
+	this.id = opt.id;
 	this.labelKey = opt.labelKey;
 	this.valueKey = opt.valueKey;
 	if(!jut.isEmpty(opt.defaultShow)) this.defaultShow = opt.defaultShow;
@@ -56,7 +61,7 @@ JeinComboBox.prototype.create = function(opt){
 	if(!jut.isEmpty(opt.data)){
 		this.draw(opt.data, opt.id);
 	}
-	//없으면 ajax로 데이터 받아옴
+	//없으면 ajax로 데이터 받아옴8
 	else{
 		jcm.doAjax(
 			true
